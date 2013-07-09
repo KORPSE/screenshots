@@ -184,8 +184,8 @@ app.actionPerformers[MODE_BACKGROUND] = {
 		app.cnv.height = initPicture.height;
 		app.cnv.width = initPicture.width;
 
-		app.state.dx = -app.cnv.offsetLeft;
-		app.state.dy = -app.cnv.offsetTop;
+		/*app.state.dx = -app.cnv.offsetLeft;
+		app.state.dy = -app.cnv.offsetTop;*/
 
 		ctx.drawImage($("#initImage")[0], 0, 0);
 	},
@@ -253,6 +253,7 @@ app.cnvController = {
 	},
 
 	down: function (e) {
+		this.updateDeltas();
 		if (app.state.mode == MODE_VIEW) {
 			return;
 		}
@@ -299,8 +300,11 @@ app.cnvController = {
 			this.actionStack.push(action);
 			this.doRedraw(action);			
 		}
+	},
+	updateDeltas: function () {
+		app.state.dx = -app.cnv.offsetLeft + $(app.cnvHolder).scrollLeft();
+		app.state.dy = -app.cnv.offsetTop + $(app.cnvHolder).scrollTop();
 	}
-
 }
 
 
@@ -311,18 +315,20 @@ $(window).load(function() {
 
 	function refreshEventHandlers () {
 		app.cnv = $("#cnv")[0];
+		app.cnvHolder = $("#canvasHolder")[0];
 		app.ctx = app.cnv.getContext("2d");
 		$("#cnv").off("**");
 		$("#cnv").on("mousedown", function (e) { app.cnvController.down(e) });
 		$("#cnv").on("mouseup", function (e) { app.cnvController.up(e) });
-		app.state.dx = -app.cnv.offsetLeft;
-		app.state.dy = -app.cnv.offsetTop;
+		app.cnvController.updateDeltas();
+		$(document).off("keypress");
 		$(document).keypress(function(e) {
 			if(e.which == 26 || e.which == 122) {
 				app.cnvController.undo();
 			} else if(e.which == 25 || e.which == 121) {
 				app.cnvController.redo();
 			}
+			e.stopPropagation();
 		});
 	}
 
