@@ -35,7 +35,7 @@ app.state = {
 app.actionPerformers = [];
 
 app.actionPerformers[MODE_DRAW_LINE] = {
-	prepare: function (ctx, action) {},
+	prepare: function (ctx) {},
 	execute: function (ctx, action) {
 		ctx.beginPath();
 		ctx.moveTo(action.x0, action.y0);
@@ -75,11 +75,10 @@ app.actionPerformers[MODE_DRAW_RECTANGLE] = {
 
 app.actionPerformers[MODE_CROP] = {
 	jcropApi: null,
-	prepare: function (ctx, action) {
+	prepare: function (ctx) {
 		var jcropApi = {};
 
 		var a = new Action (0, 0, MODE_CROP);
-		//$(document).trigger( "setCurrentAction", [ a ] );
 
 		function getCoords(c) {
 			a.x0 = c.x;
@@ -101,6 +100,7 @@ app.actionPerformers[MODE_CROP] = {
 			if(e.which == 13) {
 				actionHandler.destroyApi(ctx);
 				actionHandler.execute(ctx, a);
+				$(document).trigger("setCurrentAction", [ a ]);
 				$(document).trigger("releaseAction");
 			}
 		});
@@ -132,7 +132,7 @@ app.actionPerformers[MODE_CROP] = {
 }
 
 app.actionPerformers[MODE_PEN] = {
-	prepare: function (ctx, action) {},
+	prepare: function (ctx) {},
 	execute: function (ctx, action) {
 		ctx.beginPath();
 		ctx.moveTo(action.x0, action.y0);
@@ -178,7 +178,7 @@ app.actionPerformers[MODE_PEN] = {
 }
 
 app.actionPerformers[MODE_BACKGROUND] = {
-	prepare: function (ctx, action) {},
+	prepare: function (ctx) {},
 	execute: function (ctx, action) {
 		var initPicture = $("#initImage")[0];
 		app.cnv.height = initPicture.height;
@@ -309,8 +309,6 @@ $(window).load(function() {
 	app.cnv = $("#cnv")[0];
 	app.ctx = app.cnv.getContext("2d");
 
-	app.cnvController.setBack();
-
 	function refreshEventHandlers () {
 		app.cnv = $("#cnv")[0];
 		app.ctx = app.cnv.getContext("2d");
@@ -330,7 +328,6 @@ $(window).load(function() {
 
 	$(document).on("refreshEventHandlers", refreshEventHandlers );
 	$(document).on("setCurrentAction", function (e, action) {
-		app.actionPerformers[action.type].prepare(app.ctx, action);
 		app.state.currentAction = action;
 	});
 	$(document).on("releaseAction", function (e) {
@@ -359,6 +356,7 @@ $(window).load(function() {
 				app.cnvController.redo();
 			} else if (app.state.tools[button.id] != undefined) {
 				app.state.mode = app.state.tools[button.id];
+				app.actionPerformers[app.state.mode].prepare(app.ctx);
 			}
 		});
 });
