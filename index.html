@@ -35,7 +35,7 @@
 
 		function pasteHandler(e) {
 		// если поддерживается event.clipboardData (Chrome)
-			  if (e.clipboardData) {
+			  if (e.clipboardData && e.clipboardData.items) {
 			  // получаем все содержимое буфера
 			  var items = e.clipboardData.items;
 			  if (items) {
