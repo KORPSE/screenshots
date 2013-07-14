@@ -37,7 +37,7 @@
 	height: 1px;
 	width: 1px;
 	overflow: hidden; /* we make the box 1x1 pixel and prevent overflow */
-	filter: alpha(opacity =         0);
+	filter: alpha(opacity = 0);
 	/* that one we could drop,  we're really taking about one single pixel after all */
 	opacity: 0; /* we make that single box transparent */
 }
@@ -60,7 +60,6 @@
 	vertical-align: middle;
 	margin-right: 5px;
 	margin-bottom: 5px;
-	
 }
 #brush {
 	width: 5px;
@@ -84,31 +83,31 @@
 		<h1>Shot'n'Mark</h1>
 	</div>
 	<div class="container">
-		<div id="leftBar" style="float: left">
+		<div id="leftBar" style="float: left; width: 50px;">
 			<div id="button-right" class="btn btn-inverse">
 				<img src="static/img/icon-cog-small.png">
 			</div>
-			<br>
 			<div id="button-color" class="btn">
 				<input type="hidden" class="span2" value="" >
 				<i id="color" class="icon-white" data-color="rgba(255, 0, 0, 0.5)"
 					data-color-format="rgba" style="background-color: rgba(255, 0, 0, 0.5)"></i>
 			</div>
-			<br>
-			<div class="dropdown" style="padding-bottom: 5px">
-				<a id="link-brushsize" role="button" class="dropdown-toggle btn" data-toggle="dropdown">
-					<i id="brush"></i>
-				</a>
-				<ul id="brushMenu" class="dropdown-menu" role="menu" aria-labelledby="link-brushsize">
-					<li>
-						<a href="#" class="brushSize" data-value="1">1 px</a>
-						<a href="#" class="brushSize" data-value="2">2 px</a>
-						<a href="#" class="brushSize" data-value="5">5 px</a>
-						<a href="#" class="brushSize" data-value="8">8 px</a>
-						<a href="#" class="brushSize" data-value="10">10 px</a>
-						<a href="#" class="brushSize" data-value="12">12 px</a>
-					</li>
-				</ul>
+			<div style="display:block; padding-bottom:5px; float:left;">
+				<div class="dropdown">
+					<div id="link-brushsize" class="dropdown-toggle btn" data-toggle="dropdown">
+						<i id="brush"></i>
+					</div>
+					<ul id="brushMenu" class="dropdown-menu" role="menu" aria-labelledby="link-brushsize">
+						<li>
+							<a href="#" class="brushSize" data-value="1">1 px</a>
+							<a href="#" class="brushSize" data-value="2">2 px</a>
+							<a href="#" class="brushSize" data-value="5">5 px</a>
+							<a href="#" class="brushSize" data-value="8">8 px</a>
+							<a href="#" class="brushSize" data-value="10">10 px</a>
+							<a href="#" class="brushSize" data-value="12">12 px</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 			<div id="button-upload" class="btn">
 				<img src="static/img/glyphicons_201_upload.png">
