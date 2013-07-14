@@ -71,20 +71,23 @@ if (XMLHttpRequest.prototype.sendAsBinary === undefined) {
 }
 
 function postCanvasToURL(url, name, fn, canvas, type) {
-	var data = canvas.toDataURL(type);
-	data = data.replace('data:' + type + ';base64,', '');
+  var data = canvas.toDataURL(type);
+  data = data.replace('data:' + type + ';base64,', '');
 
-	var xhr = new XMLHttpRequest();
-	xhr.open('POST', url, true);
-	var boundary = 'ohaiimaboundary';
-	xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary='
-			+ boundary);
-	xhr.sendAsBinary([
-			'--' + boundary,
-			'Content-Disposition: form-data; name="' + name + '"; filename="'
-					+ fn + '"', 'Content-Type: ' + type, '', atob(data),
-			'--' + boundary + '--' ].join('\r\n'));
-	return xhr;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  var boundary = 'ohaiimaboundary';
+  xhr.setRequestHeader(
+    'Content-Type', 'multipart/form-data; boundary=' + boundary);
+  xhr.sendAsBinary([
+    '--' + boundary,
+    'Content-Disposition: form-data; name="' + name + '"; filename="' + fn + '"',
+    'Content-Type: ' + type,
+    '',
+    atob(data),
+    '--' + boundary + '--'
+  ].join('\r\n'));
+  return xhr;
 }
 
 $("#button-upload").on("click", function () {
@@ -94,13 +97,9 @@ $("#button-upload").on("click", function () {
 		xhr.onreadystatechange = function() {
 			if (this.status == 200) {
 				var response = $.parseJSON(this.responseText)
-				$("#myModalLabel").text("Success");
+				$("#myModalLabel").html("Success");
 				$("#myModalBody").html('Here\'s your link: <input type="text" readonly '
-						+ 'value="'
-						+ document.URL.substr(0,
-								document.URL.search("#") > -1
-									? document.URL.search("#") : document.URL.length)
-						+ 'get/'
+						+ 'value="' + document.URL + 'get/'
 						+ response.filename + '" id="linkField">');
 				$("#linkField").on("click", function () {
 					this.select();
@@ -108,19 +107,10 @@ $("#button-upload").on("click", function () {
 				$('#myModal').modal();
 			} else {
 				var response = $.parseJSON(this.responseText)
-				$("#myModalLabel").text("Something goes wrong");
+				$("#myModalLabel").html("Something goes wrong");
 				$("#myModalBody").html(response.error);
 				$('#myModal').modal();
 			}
 		}
 	}
-});
-
-$("#color").colorpicker().on('changeColor', function(ev){
-	var rgb = ev.color.toRGB();
-	this.style.backgroundColor = "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a].join(',') + ")";
-});
-
-$("#button-color").on("click", function () {
-	$("#color").colorpicker("show");
 });

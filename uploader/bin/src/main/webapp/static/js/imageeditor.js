@@ -17,10 +17,9 @@ app.state = {
 	buttonState: BUTTON_RELEASED,
 	x0: 0,
 	y0: 0,
+	colour: null,
 	opacity: 100,
 	currentAction: null,
-	strokeStyle: STROKE_STYLE,
-	strokeWidth: STROKE_WIDTH,
 	tools : {
 		"actionPen" : MODE_PEN,
 		"actionLine" : MODE_DRAW_LINE,
@@ -41,8 +40,8 @@ app.actionPerformers[MODE_DRAW_LINE] = {
 		ctx.beginPath();
 		ctx.moveTo(action.x0, action.y0);
 		ctx.lineTo(action.x, action.y);
-		ctx.lineWidth = app.state.strokeWidth;
-		ctx.strokeStyle = app.state.strokeStyle;
+		ctx.lineWidth = STROKE_WIDTH;
+		ctx.strokeStyle = STROKE_STYLE;
 		ctx.lineCap = LINE_ENDS;
 		ctx.stroke();
 		ctx.closePath();
@@ -60,8 +59,8 @@ app.actionPerformers[MODE_DRAW_RECTANGLE] = {
 	execute: function (ctx, action) {
 		ctx.beginPath();
 		ctx.rect(action.x0, action.y0, action.x - action.x0, action.y - action.y0);
-		ctx.lineWidth = app.state.strokeWidth;
-		ctx.strokeStyle = app.state.strokeStyle;
+		ctx.lineWidth = STROKE_WIDTH;
+		ctx.strokeStyle = STROKE_STYLE;
 		ctx.lineCap = LINE_ENDS;
 		ctx.stroke();
 		ctx.closePath();
@@ -144,8 +143,8 @@ app.actionPerformers[MODE_PEN] = {
 				ctx.lineTo(action.points[i].x, action.points[i].y);
 			}
 		}
-		ctx.lineWidth = app.state.strokeWidth;
-		ctx.strokeStyle = app.state.strokeStyle;
+		ctx.lineWidth = STROKE_WIDTH;
+		ctx.strokeStyle = STROKE_STYLE;
 		ctx.lineCap = LINE_ENDS;
 		ctx.stroke();
 		ctx.closePath();
@@ -236,8 +235,8 @@ app.cnvController = {
 				var cy = (action.y > action.y0) ? 1 : -1;
 				app.ctx.putImageData(imgData,
 					0, 0,
-					action.x0 - cx * app.state.strokeWidth, action.y0 - cy * app.state.strokeWidth,
-					action.x - action.x0 + cx * app.state.strokeWidth * 2, action.y - action.y0 + cy * app.state.strokeWidth * 2);
+					action.x0 - cx * STROKE_WIDTH, action.y0 - cy * STROKE_WIDTH,
+					action.x - action.x0 + cx * STROKE_WIDTH * 2, action.y - action.y0 + cy * STROKE_WIDTH * 2);
 			}
 		}
 		startAction++;
@@ -368,20 +367,6 @@ $(window).load(function() {
 				}
 			}
 		});
-	
-	$("#color").colorpicker().on('changeColor', function(ev){
-		var rgb = ev.color.toRGB();
-		app.state.strokeStyle = "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a].join(',') + ")";
-	});
-	
-	$(".brushSize").on("click", function () {
-		app.state.strokeWidth = $(this).data("value");
-		$("#brush").css({
-			"width": app.state.strokeWidth,
-			"height": app.state.strokeWidth
-		});
-	});
-	
 });
 
 Action = function (x, y, type) {
