@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/")
 public class FirstController {
 	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String Editor() {
+		return "editor";
+	}
+
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String Hello() {
 		return "hello";
