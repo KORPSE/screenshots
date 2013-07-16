@@ -26,6 +26,8 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	z-index: 20;
+	position: relative;
 }
 
 .tool-container i[class^="icon-"] {
@@ -67,6 +69,15 @@
 	background-color: black;
 	display: inline-block;
 	border-radius: 50%;
+}
+#pasteText {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: 0px auto;
+	color: #CCCCCC;
+	font-size: large;
+	z-index: 1;
 }
 </style>
 <link href="static/toolbar/jquery.toolbars.css" rel="stylesheet">
@@ -115,6 +126,9 @@
 		</div>
 		<div id="canvasHolder" unselectable="yes" onselectstart="return false;" style="float: left">
 			<canvas id="cnv" width="0" height="0"></canvas>
+			<div style="width: 800px; height: 700px; position: absolute; z-index: 0;">
+				<div id="pasteText">Ctrl-V to paste</div>
+			</div>
 		</div>
 	</div>
 	<img id="initImage" style="display: none">

@@ -296,7 +296,7 @@ app.cnvController = {
 	},
 
 	redo: function () {
-		if (this.actionForwardStack.length > 0) {
+		if (this.actionForwardStack.length > 1) {
 			var action = this.actionForwardStack.pop();
 			this.actionStack.push(action);
 			this.doRedraw(action);			
