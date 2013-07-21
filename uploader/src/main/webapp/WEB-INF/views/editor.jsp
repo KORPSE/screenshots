@@ -18,7 +18,7 @@
 	background: #EEEEEE;
 }
 
-#cnv {
+canvas.cnv {
 	cursor: crosshair;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -26,8 +26,14 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	z-index: 20;
+	display: block;
 	position: relative;
+}
+#cnv0 {
+	z-index: 20;
+}
+#cnv {
+	z-index: 21;
 }
 
 .tool-container i[class^="icon-"] {
@@ -125,7 +131,8 @@
 			</div>
 		</div>
 		<div id="canvasHolder" unselectable="yes" onselectstart="return false;" style="float: left">
-			<canvas id="cnv" width="0" height="0"></canvas>
+			<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
+			<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
 			<div style="width: 800px; height: 700px; position: absolute; z-index: 0;">
 				<div id="pasteText">Ctrl-V to paste</div>
 			</div>

@@ -36,47 +36,47 @@ app.state = {
 app.actionPerformers = [];
 
 app.actionPerformers[MODE_DRAW_LINE] = {
-	prepare: function (ctx) {},
-	execute: function (ctx, action) {
+	prepare: function () {},
+	execute: function (action) {
+		var ctx = $("#cnv")[0].getContext("2d");
 		ctx.beginPath();
 		ctx.moveTo(action.x0, action.y0);
 		ctx.lineTo(action.x, action.y);
-		ctx.lineWidth = app.state.strokeWidth;
-		ctx.strokeStyle = app.state.strokeStyle;
+		ctx.lineWidth = action.strokeWidth;
+		ctx.strokeStyle = action.strokeStyle;
 		ctx.lineCap = LINE_ENDS;
 		ctx.stroke();
 		ctx.closePath();
 	},
-	post: function (ctx, action) {},
-	update: function (ctx, action, x, y) {
+	post: function () {},
+	update: function (action, x, y) {
 		action.x = x;
 		action.y = y;
-	},
-	refreshable: true
+	}
 }
 
 app.actionPerformers[MODE_DRAW_RECTANGLE] = {
-	prepare: function(ctx, action) {},
-	execute: function (ctx, action) {
+	prepare: function() {},
+	execute: function (action) {
+		var ctx = $("#cnv")[0].getContext("2d");
 		ctx.beginPath();
 		ctx.rect(action.x0, action.y0, action.x - action.x0, action.y - action.y0);
-		ctx.lineWidth = app.state.strokeWidth;
-		ctx.strokeStyle = app.state.strokeStyle;
+		ctx.lineWidth = action.strokeWidth;
+		ctx.strokeStyle = action.strokeStyle;
 		ctx.lineCap = LINE_ENDS;
 		ctx.stroke();
 		ctx.closePath();
 	},
-	post: function (ctx, action) {},
-	update: function (ctx, action, x, y) {
+	post: function () {},
+	update: function (action, x, y) {
 		action.x = x;
 		action.y = y;
-	},
-	refreshable: true
+	}
 }
 
 app.actionPerformers[MODE_CROP] = {
 	jcropApi: null,
-	prepare: function (ctx) {
+	prepare: function () {
 		var jcropApi = {};
 
 		var a = new Action (0, 0, MODE_CROP);
@@ -87,7 +87,7 @@ app.actionPerformers[MODE_CROP] = {
 			a.x = c.x2;
 			a.y = c.y2;
 		};
-
+		
 		$("#cnv").Jcrop({
 			onChange: getCoords,
 			onSelect: getCoords,
@@ -95,19 +95,24 @@ app.actionPerformers[MODE_CROP] = {
 		}, function () {
 			jcropApi = this;
 		});
+		
+		$(".jcrop-holder").css("top", -$("#cnv").height());
+
 		this.jcropApi = jcropApi;
 		var actionHandler = this;
 		$(document).keypress(function(e) {
-			if(e.which == 13) {
-				actionHandler.destroyApi(ctx);
-				actionHandler.execute(ctx, a);
+			if (e.which == 13) {
+				actionHandler.destroyApi();
+				actionHandler.execute(a);
 				$(document).trigger("setCurrentAction", [ a ]);
 				$(document).trigger("releaseAction");
 			}
 		});
 	},
-	execute: function (ctx, action) {
-		$(ctx.canvas).pixastic("crop", {
+	execute: function (action) {
+		var cnv0 = $("#cnv0")[0];
+		var cnv = $("#cnv")[0];
+		$(cnv0).pixastic("crop", {
             rect: {
                 left: action.x0,
                 top: action.y0,
@@ -115,26 +120,33 @@ app.actionPerformers[MODE_CROP] = {
                 height: action.y - action.y0
             }
         });
-		$("#cnv")[0].removeAttribute("tabindex");
+
+		var cnv0 = $("#cnv0")[0];
+		cnv0.removeAttribute("tabindex");
+		
+		cnv.width = cnv0.width;
+		cnv.height = cnv0.height;
+		$(cnv).css("top", -cnv0.height);
 	},
-	post: function (ctx, action) {
+	post: function () {
 		if (this.jcropApi != null) {
-			this.destroyApi(ctx);
+			this.destroyApi();
 		}
 		$(document).off("keypress");
 	},
-	destroyApi: function (ctx) {
+	destroyApi: function () {
+		var ctx = $("#cnv")[0].getContext("2d");
 		this.jcropApi.destroy();
 		$("#canvasHolder").append(ctx.canvas);
 		ctx.canvas.removeAttribute("style");
 		this.jcropApi = null;
-	},
-	refreshable: false,
+	}
 }
 
 app.actionPerformers[MODE_PEN] = {
-	prepare: function (ctx) {},
-	execute: function (ctx, action) {
+	prepare: function () {},
+	execute: function (action) {
+		var ctx = $("#cnv")[0].getContext("2d");
 		ctx.beginPath();
 		ctx.moveTo(action.x0, action.y0);
 		for (var i in action.points) {
@@ -144,16 +156,14 @@ app.actionPerformers[MODE_PEN] = {
 				ctx.lineTo(action.points[i].x, action.points[i].y);
 			}
 		}
-		ctx.lineWidth = app.state.strokeWidth;
-		ctx.strokeStyle = app.state.strokeStyle;
+		ctx.lineWidth = action.strokeWidth;
+		ctx.strokeStyle = action.strokeStyle;
 		ctx.lineCap = LINE_ENDS;
 		ctx.stroke();
 		ctx.closePath();
 	},
-	post: function (ctx, action) {
-		action.bitmap = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-	},
-	update: function (ctx, action, x, y) {
+	post: function () {},
+	update: function (action, x, y) {
 		if (action.points == undefined) {
 			action.points = new Array();
 			action.x0 = x;
@@ -174,26 +184,27 @@ app.actionPerformers[MODE_PEN] = {
 			action.y = y;
 		}
 		action.points.push({ x: x, y: y });
-	},
-	refreshable: true
+	}
 }
 
 app.actionPerformers[MODE_BACKGROUND] = {
-	prepare: function (ctx) {},
-	execute: function (ctx, action) {
+	prepare: function () {},
+	execute: function (action) {
 		var initPicture = $("#initImage")[0];
-		app.cnv.height = initPicture.height;
-		app.cnv.width = initPicture.width;
+		var ctx = $("#cnv")[0].getContext("2d");
 
-		/*app.state.dx = -app.cnv.offsetLeft;
-		app.state.dy = -app.cnv.offsetTop;*/
+		$(".cnv").attr("width", initPicture.width);
+		$(".cnv").attr("height", initPicture.height);
+		$("#cnv").css("top", -$(ctx.canvas).height());
 
 		ctx.drawImage($("#initImage")[0], 0, 0);
 	},
-	post: function (ctx, action) {},
-	refreshable: true
+	post: function () {}
 }
 
+/**
+ * Controller
+ */
 app.cnvController = {
 
 	actionStack: new Array(),
@@ -202,20 +213,29 @@ app.cnvController = {
 	dx: 0,
 	dy: 0,
 
-	doAction: function(action) {
+	doAction: function (action) {
 
 		if (action == null || app.actionPerformers[action.type] == undefined) {
 			return;
 		}
 
-		app.actionPerformers[action.type].execute(app.ctx, action);
+		app.actionPerformers[action.type].execute(action);
+	},
+	
+	mergeCnv: function () {
+		var cnv = $("#cnv")[0];
+		var cnv0 = $("#cnv0")[0];
+		cnv0.getContext("2d").drawImage(cnv, 0, 0);
+		cnv.getContext("2d").clearRect(0, 0, cnv.width, cnv.height);
 	},
 
 	doRedraw: function (action) {
 
 		//find last action with bitmap
+		//TODO: rewrite, kill app.ctx, app.cnv use $("#cnv")
+		
 		var startAction = -1;
-		for (i in this.actionStack) {
+		for (var i in this.actionStack) {
 			if (this.actionStack[i].bitmap != undefined) {
 				startAction = i;
 			}
@@ -223,27 +243,17 @@ app.cnvController = {
 
 		if (startAction > -1) {
 			var imgData = this.actionStack[startAction].bitmap;
-			if (startAction < this.actionStack.length - 1 || !this.actionStack[startAction].refreshable) {
-				if (app.cnv.width != imgData.width) {
-					app.cnv.width = imgData.width;
-				}
-				if (app.cnv.height != imgData.height) {
-					app.cnv.height = imgData.height;
-				}
-				app.ctx.putImageData(imgData, 0, 0);
-			} else {
-				var cx = (action.x > action.x0) ? 1 : -1;
-				var cy = (action.y > action.y0) ? 1 : -1;
-				app.ctx.putImageData(imgData,
-					0, 0,
-					action.x0 - cx * app.state.strokeWidth, action.y0 - cy * app.state.strokeWidth,
-					action.x - action.x0 + cx * app.state.strokeWidth * 2, action.y - action.y0 + cy * app.state.strokeWidth * 2);
-			}
+			var initPicture = $("#initImage")[0];
+			$(".cnv").attr("width", initPicture.width);
+			$(".cnv").attr("height", initPicture.height);
+			$("#cnv").css("top", -$("#cnv0").height());
+			$("#cnv0")[0].putImageData(imgData, 0, 0);
 		}
 		startAction++;
 
 		for (var i = startAction; i < this.actionStack.length; i++) {
 			this.doAction(this.actionStack[i]);
+			this.mergeCnv();
 		}
 	},
 
@@ -251,6 +261,7 @@ app.cnvController = {
 		var action = new Action(0, 0, MODE_BACKGROUND);
 		this.doAction(action);
 		this.actionStack.push(action);
+		this.mergeCnv();
 	},
 
 	down: function (e) {
@@ -261,8 +272,10 @@ app.cnvController = {
 		if (app.state.currentAction == null) {
 			this.actionForwardStack = new Array();
 			var a = new Action(e.pageX + app.state.dx, e.pageY + app.state.dy, app.state.mode);
+			a.strokeStyle = app.state.strokeStyle;
+			a.strokeWidth = app.state.strokeWidth;
 			$(document).trigger("setCurrentAction", [ a ]);
-			$(app.cnv).on("mousemove", this.drag);
+			$("#cnv").on("mousemove", this.drag);
 		}
 	},
 
@@ -274,50 +287,48 @@ app.cnvController = {
 
 	drag: function (e) {
 		if (app.state.currentAction != null) {
-			if (app.actionPerformers[app.state.currentAction.type].refreshable) {
-				app.cnvController.doRedraw(app.state.currentAction);
+			var cnv = $("#cnv")[0];
+			var ctx = cnv.getContext("2d");
+			ctx.clearRect(0, 0, cnv.width, cnv.height);
+			if (app.actionPerformers[app.state.currentAction.type].update) {
+				app.actionPerformers[app.state.currentAction.type]
+					.update(
+						app.state.currentAction,
+						e.pageX + app.state.dx,
+						e.pageY + app.state.dy);
 			}
-			app.actionPerformers[app.state.currentAction.type]
-				.update(
-					app.ctx,
-					app.state.currentAction,
-					e.pageX + app.state.dx,
-					e.pageY + app.state.dy);
-			if (app.actionPerformers[app.state.currentAction.type].refreshable) {
-				app.cnvController.doAction(app.state.currentAction);
-			}
+			app.cnvController.doAction(app.state.currentAction);
 		}
 	},
 
 	undo: function () {
-		var action = this.actionStack.pop();
-		this.actionForwardStack.push(action);
-		this.doRedraw(action);
+		if (this.actionStack.length > 1) {
+			var action = this.actionStack.pop();
+			this.actionForwardStack.push(action);
+			this.doRedraw(action);
+		}
 	},
 
 	redo: function () {
-		if (this.actionForwardStack.length > 1) {
+		if (this.actionForwardStack.length > 0) {
 			var action = this.actionForwardStack.pop();
 			this.actionStack.push(action);
 			this.doRedraw(action);			
 		}
 	},
 	updateDeltas: function () {
-		app.state.dx = -app.cnv.offsetLeft + $(app.cnvHolder).scrollLeft();
-		app.state.dy = -app.cnv.offsetTop + $(app.cnvHolder).scrollTop();
+		var cnv = $("#cnv")[0];
+		app.state.dx = -cnv.offsetLeft + $(app.cnvHolder).scrollLeft();
+		app.state.dy = -cnv.offsetTop + $(app.cnvHolder).scrollTop();
 	}
 }
 
 
 //init
 $(window).load(function() {
-	app.cnv = $("#cnv")[0];
-	app.ctx = app.cnv.getContext("2d");
 
 	function refreshEventHandlers () {
-		app.cnv = $("#cnv")[0];
 		app.cnvHolder = $("#canvasHolder")[0];
-		app.ctx = app.cnv.getContext("2d");
 		$("#cnv").off("**");
 		$("#cnv").on("mousedown", function (e) { app.cnvController.down(e) });
 		$("#cnv").on("mouseup", function (e) { app.cnvController.up(e) });
@@ -333,21 +344,22 @@ $(window).load(function() {
 		});
 	}
 
+	/**
+	 *  Application events
+	 */
+	
 	$(document).on("refreshEventHandlers", refreshEventHandlers );
 	$(document).on("setCurrentAction", function (e, action) {
 		app.state.currentAction = action;
 	});
 	$(document).on("releaseAction", function (e) {
-		app.actionPerformers[app.state.mode].post(app.ctx, app.state.currentAction);
+		
+		app.actionPerformers[app.state.mode].post();
 		refreshEventHandlers();
-		if (!app.actionPerformers[app.state.currentAction.type].refreshable) {
-			app.state.currentAction.bitmap = app.ctx.getImageData(0, 0, app.ctx.canvas.width, app.ctx.canvas.height);
-		};
 		app.cnvController.actionStack.push(app.state.currentAction);
 		app.state.currentAction = null;
+		app.cnvController.mergeCnv();
 	});
-
-	refreshEventHandlers();
 
 	$('#button-right').toolbar({
 		content: '#user-options',
@@ -364,13 +376,15 @@ $(window).load(function() {
 					app.cnvController.redo();
 				} else if (app.state.tools[button.id] != undefined) {
 					app.state.mode = app.state.tools[button.id];
-					app.actionPerformers[app.state.mode].prepare(app.ctx);
+					app.actionPerformers[app.state.mode].prepare($("#cnv")[0].getContext("2d"));
 				}
 			}
 		});
+
+	refreshEventHandlers();
 	
 	$("#color").colorpicker().on('changeColor', function(ev){
-		var rgb = ev.color.toRGB();
+		var rgb = ev.color.toRGB();	
 		app.state.strokeStyle = "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a].join(',') + ")";
 	});
 	
@@ -384,7 +398,7 @@ $(window).load(function() {
 	
 });
 
-Action = function (x, y, type) {
+Action = function (x, y, type, brushStyle) {
 	this.type = type;
 	this.x0 = x;
 	this.y0 = y;
