@@ -14,17 +14,6 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<property name="messageConverters">
-			<list>
-				<bean
-					class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
-			</list>
-		</property>
-	</bean>
-	<context:component-scan base-package="ru.korpse.screenshots.core" />
+
 
 </beans>

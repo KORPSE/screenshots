@@ -90,7 +90,7 @@ function postCanvasToURL(url, name, fn, canvas, type) {
 $("#button-upload").on("click", function () {
 	var cnv = $("#cnv0")[0];
 	if (cnv.width > 0 && cnv.height > 0) {
-		var xhr = postCanvasToURL("upload/", "fileUpload", "screenshot.png", cnv, "image/png");
+		var xhr = postCanvasToURL(app.uploadUrl, "fileUpload", "screenshot.png", cnv, "image/png");
 		xhr.onreadystatechange = function() {
 			if (this.status == 200) {
 				var response = $.parseJSON(this.responseText)

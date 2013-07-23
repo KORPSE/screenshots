@@ -1,60 +1,58 @@
 package ru.korpse.screenshots.core.controllers;
 
-import java.io.File;
-import java.math.BigInteger;
-import java.security.MessageDigest;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.crypto.codec.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import ru.korpse.screenshots.core.dao.ShotDao;
+import ru.korpse.screenshots.entities.Shot;
+
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 @Controller
 @RequestMapping("/upload")
 public class FileUploadController {
 
-	private String tomcatHome = System.getProperty("catalina.base");
+	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	
+	@Autowired
+	private ShotDao dao;
 
-	private String saveDirectory = tomcatHome + "/files/";
-	
-	public FileUploadController() {
-		(new File(saveDirectory)).mkdirs();
-	}
-	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> handleFileUpload(HttpServletRequest request,
-			@RequestParam CommonsMultipartFile fileUpload) throws Exception {
+    public Map<String, Object> doPost(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 
-		MessageDigest md5Digest = MessageDigest.getInstance("MD5");
+        @SuppressWarnings("deprecation")
+		Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
+        BlobKey blobKey = blobs.get("fileUpload");
+        if (blobKey == null) {
+			result.put("error", "File not loaded");
+			return result;
+        }
+        Shot shot = new Shot();
+        shot.setBlobKey(blobKey.getKeyString());
+        shot.setCreated(new Date());
 
-		md5Digest.update(fileUpload.getBytes(), 0, fileUpload.getBytes().length);
-
-		String filename = new String(Base64.encode(new BigInteger(1, md5Digest.digest()).toByteArray()))
-			.replace('/', '_');
-		try {
-			if (fileUpload != null && fileUpload.getSize() > 0) {
-				result.put("size", fileUpload.getSize());
-	
-				if (!fileUpload.getOriginalFilename().equals("")) {
-					fileUpload.transferTo(new File(saveDirectory + filename));
-				}
-				result.put("filename", filename);
-			}
-		}
-		catch (Exception e) {
-			result.put("error", e.getMessage());
-		}
-		
-		return result;
-	}
+        dao.save(shot);
+        
+    	result.put("filename", shot.getKey());
+        
+        return result;
+    }
 }

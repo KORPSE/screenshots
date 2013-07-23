@@ -1,41 +1,38 @@
 package ru.korpse.screenshots.core.controllers;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.extern.log4j.Log4j;
-
-import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import ru.korpse.screenshots.core.dao.ShotDao;
+import ru.korpse.screenshots.entities.Shot;
+
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+
 @Controller
 @RequestMapping(value = "/get")
-@Log4j
 public class FileController {
+	
+	@Autowired
+	private ShotDao dao;
 
-	private String tomcatHome = System.getProperty("catalina.base");
+	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
-	private String saveDirectory = tomcatHome + "/files/";
-
-	@RequestMapping(value = "/{hash}", method = RequestMethod.GET)
-	public void get(@PathVariable String hash, HttpServletResponse response) {
-		try {
-			// get your file as InputStream
-			InputStream is = new FileInputStream(new File(saveDirectory + "/"
-					+ hash));
-			// copy it to response's OutputStream
-			IOUtils.copy(is, response.getOutputStream());
-			response.flushBuffer();
-		} catch (IOException ex) {
-			log.info("Bad link: " + hash);
-			throw new RuntimeException("Bad link");
-		}
+	@RequestMapping(value = "/{key}", method = RequestMethod.GET)
+	public void get(@PathVariable String key, HttpServletResponse res)
+		    throws IOException, EntityNotFoundException {
+		Shot item = dao.get(key);
+		
+        BlobKey blobKey = new BlobKey(item.getBlobKey());
+        blobstoreService.serve(blobKey, res);
 	}
 }

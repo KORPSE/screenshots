@@ -1,4 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+%>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -96,6 +103,9 @@ canvas.cnv {
 <script src="static/js/pixastic.custom.js"></script>
 </head>
 <body>
+	<script>
+		app.uploadUrl = "<%= blobstoreService.createUploadUrl("/upload") %>";
+	</script>
 	<div class="page-header">
 		<h1>Shot'n'Mark</h1>
 	</div>

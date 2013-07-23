@@ -233,8 +233,24 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
 		</dependency>
-
-	</dependencies>
+	    <dependency>
+	        <groupId>com.google.appengine</groupId>
+	        <artifactId>appengine-api-1.0-sdk</artifactId>
+	        <version>1.8.2</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>com.google.appengine</groupId>
+	        <artifactId>appengine-testing</artifactId>
+	        <version>1.8.2</version>
+	        <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	        <groupId>com.google.appengine</groupId>
+	        <artifactId>appengine-api-stubs</artifactId>
+	        <version>1.8.2</version>
+	        <scope>test</scope>
+	    </dependency>
+   		</dependencies>
 	<build>
 		<finalName>screenshots</finalName>
 		<plugins>
@@ -273,6 +289,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.google.appengine</groupId>
+				<artifactId>appengine-maven-plugin</artifactId>
+				<version>1.8.2</version>
 			</plugin>
 		</plugins>
 
