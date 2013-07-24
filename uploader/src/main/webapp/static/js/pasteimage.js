@@ -92,33 +92,38 @@ $("#button-upload").on("click", function () {
 	if (cnv.width > 0 && cnv.height > 0) {
 		var xhr = postCanvasToURL(app.uploadUrl, "fileUpload", "screenshot.png", cnv, "image/png");
 		xhr.onreadystatechange = function() {
-			if (this.status == 200) {
-				var response = $.parseJSON(this.responseText)
-				$("#myModalLabel").text("Success");
-				$("#myModalBody").html('Here\'s your link: <input type="text" '
-						+ 'value="'
-						+ document.URL.substr(0,
-								document.URL.search("#") > -1
-									? document.URL.search("#") : document.URL.length)
-						+ 'get/'
-						+ response.filename + '" id="linkField">');
-				$("#linkField").focus(function() {
-				    var $this = $(this);
-				    $this.select();
-
-				    // Work around Chrome's little problem
-				    $this.mouseup(function() {
-				        // Prevent further mouseup intervention
-				        $this.unbind("mouseup");
-				        return false;
-				    });
+			if (this.readyState == 4) {
+				if (this.status == 200) {
+					var response = $.parseJSON(this.responseText)
+					$("#myModalLabel").text("Success");
+					$("#myModalBody").html('Here\'s your link: <input type="text" '
+							+ 'value="'
+							+ document.URL.substr(0,
+									document.URL.search("#") > -1
+										? document.URL.search("#") : document.URL.length)
+							+ 'get/'
+							+ response.filename + '" id="linkField">');
+					$("#linkField").focus(function() {
+					    var $this = $(this);
+					    $this.select();
+	
+					    // Work around Chrome's little problem
+					    $this.mouseup(function() {
+					        // Prevent further mouseup intervention
+					        $this.unbind("mouseup");
+					        return false;
+					    });
+					});
+					$('#myModal').modal();
+				} else {
+					var response = $.parseJSON(this.responseText)
+					$("#myModalLabel").text("Something goes wrong");
+					$("#myModalBody").html(response.error);
+					$('#myModal').modal();
+				}
+				$.get("getuploadurl").done(function (data, textStatus, jqXHR) {
+					app.uploadUrl = jqXHR.responseJSON.uploadUrl;
 				});
-				$('#myModal').modal();
-			} else {
-				var response = $.parseJSON(this.responseText)
-				$("#myModalLabel").text("Something goes wrong");
-				$("#myModalBody").html(response.error);
-				$('#myModal').modal();
 			}
 		}
 	}

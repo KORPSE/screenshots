@@ -4,20 +4,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.log4j.Log4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import ru.korpse.screenshots.core.dao.ShotDao;
 import ru.korpse.screenshots.entities.Shot;
 
 @Service
+@Log4j
 public class DeleteShotsScheduledSercvice {
 	
 	@Autowired
 	private ShotDao dao;
 	
-	@Scheduled(fixedDelay = 3600000)
 	public void doDeleteOld() {
 		Calendar cal = Calendar.getInstance();
 		
@@ -29,5 +30,8 @@ public class DeleteShotsScheduledSercvice {
         for (Shot item : shots) {
         	dao.delete(item);
         }
+        
+        log.info("cleaning old shots");
 	}
+	
 }

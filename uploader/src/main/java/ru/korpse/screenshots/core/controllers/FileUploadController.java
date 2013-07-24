@@ -23,7 +23,7 @@ import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 @Controller
-@RequestMapping("/upload")
+@RequestMapping
 public class FileUploadController {
 
 	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -31,7 +31,7 @@ public class FileUploadController {
 	@Autowired
 	private ShotDao dao;
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
     public Map<String, Object> doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
@@ -55,4 +55,13 @@ public class FileUploadController {
         
         return result;
     }
+	
+	@RequestMapping(value = "/getuploadurl", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getUploadURL() {
+	    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	    Map<String, Object> result = new HashMap<String, Object>();
+	    result.put("uploadUrl", blobstoreService.createUploadUrl("/upload"));
+	    return result;
+	}
 }
