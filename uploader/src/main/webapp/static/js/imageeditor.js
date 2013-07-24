@@ -96,8 +96,6 @@ app.actionPerformers[MODE_CROP] = {
 			jcropApi = this;
 		});
 		
-		$(".jcrop-holder").css("top", -$("#cnv").height());
-
 		this.jcropApi = jcropApi;
 		var actionHandler = this;
 		$(document).keypress(function(e) {
@@ -126,7 +124,6 @@ app.actionPerformers[MODE_CROP] = {
 		
 		cnv.width = cnv0.width;
 		cnv.height = cnv0.height;
-		$(cnv).css("top", -cnv0.height);
 	},
 	post: function () {
 		if (this.jcropApi != null) {
@@ -195,7 +192,6 @@ app.actionPerformers[MODE_BACKGROUND] = {
 
 		$(".cnv").attr("width", initPicture.width);
 		$(".cnv").attr("height", initPicture.height);
-		$("#cnv").css("top", -$(ctx.canvas).height());
 
 		ctx.drawImage($("#initImage")[0], 0, 0);
 	},
@@ -232,7 +228,6 @@ app.cnvController = {
 	doRedraw: function (action) {
 
 		//find last action with bitmap
-		//TODO: rewrite, kill app.ctx, app.cnv use $("#cnv")
 		
 		var startAction = -1;
 		for (var i in this.actionStack) {
@@ -246,7 +241,6 @@ app.cnvController = {
 			var initPicture = $("#initImage")[0];
 			$(".cnv").attr("width", initPicture.width);
 			$(".cnv").attr("height", initPicture.height);
-			$("#cnv").css("top", -$("#cnv0").height());
 			$("#cnv0")[0].putImageData(imgData, 0, 0);
 		}
 		startAction++;
@@ -317,7 +311,7 @@ app.cnvController = {
 		}
 	},
 	updateDeltas: function () {
-		var cnv = $("#cnv")[0];
+		var cnv = $("#canvases")[0];
 		app.state.dx = -cnv.offsetLeft + $(app.cnvHolder).scrollLeft();
 		app.state.dy = -cnv.offsetTop + $(app.cnvHolder).scrollTop();
 	}

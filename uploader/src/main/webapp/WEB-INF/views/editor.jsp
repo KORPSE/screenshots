@@ -8,7 +8,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title>Image editor test page</title>
+<title>x-shot: Edit, save and share your screenshots using only browser</title>
 <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
 	media="screen">
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -32,7 +32,7 @@ canvas.cnv {
 	-ms-user-select: none;
 	user-select: none;
 	display: block;
-	position: relative;
+	position: absolute;
 }
 #cnv0 {
 	z-index: 20;
@@ -90,6 +90,9 @@ canvas.cnv {
 	font-size: large;
 	z-index: 1;
 }
+#canvases {
+	position: relative;
+}
 </style>
 <link href="static/toolbar/jquery.toolbars.css" rel="stylesheet">
 <script src="static/toolbar/jquery.toolbar.min.js"></script>
@@ -104,8 +107,9 @@ canvas.cnv {
 	<script>
 		app.uploadUrl = "<%= blobstoreService.createUploadUrl("/upload") %>";
 	</script>
-	<div class="page-header">
-		<h1>Shot'n'Mark</h1>
+	<div class="page-header" align="center">
+		<h1>X-shot</h1>
+		<i>Edit, save and share your screenshots using only browser</i>
 	</div>
 	<div class="container">
 		<div id="leftBar" style="float: left; width: 50px;">
@@ -139,10 +143,24 @@ canvas.cnv {
 			</div>
 		</div>
 		<div id="canvasHolder" unselectable="yes" onselectstart="return false;" style="float: left">
-			<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
-			<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
+			<div id="canvases">
+				<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
+				<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
+			</div>
 			<div style="width: 800px; height: 700px; position: absolute; z-index: 0;">
 				<div id="pasteText">Ctrl-V to paste</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="navbar navbar-fixed-bottom">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="#">x-shot</a>
+				<ul class="nav">
+					<li class="divider-vertical"><a href="https://github.com/KORPSE/screenshots">GitHub</a></li>
+					<li class="divider-vertical"><a href="https://github.com/KORPSE">Author</a></li>
+				</ul>
 			</div>
 		</div>
 	</div>
