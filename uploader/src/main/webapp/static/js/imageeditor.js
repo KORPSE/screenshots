@@ -134,7 +134,7 @@ app.actionPerformers[MODE_CROP] = {
 	destroyApi: function () {
 		var ctx = $("#cnv")[0].getContext("2d");
 		this.jcropApi.destroy();
-		$("#canvasHolder").append(ctx.canvas);
+		$("#canvases").append(ctx.canvas);
 		ctx.canvas.removeAttribute("style");
 		this.jcropApi = null;
 	}
@@ -257,7 +257,7 @@ app.cnvController = {
 		this.actionStack.push(action);
 		this.mergeCnv();
 		
-		$("#pasteText").hide();
+		$("#pasteTextHolder").hide();
 	},
 
 	down: function (e) {
@@ -371,8 +371,12 @@ $(window).load(function() {
 				} else if (button.id == "redo") {
 					app.cnvController.redo();
 				} else if (app.state.tools[button.id] != undefined) {
+					if (app.state.mode != MODE_VIEW) { 
+						app.actionPerformers[app.state.mode].post();
+						$(document).trigger("refreshEventHandlers");
+					}
 					app.state.mode = app.state.tools[button.id];
-					app.actionPerformers[app.state.mode].prepare($("#cnv")[0].getContext("2d"));
+					app.actionPerformers[app.state.mode].prepare();
 				}
 			}
 		});

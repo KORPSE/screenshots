@@ -147,7 +147,7 @@ canvas.cnv {
 				<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
 				<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
 			</div>
-			<div style="width: 800px; height: 700px; position: absolute; z-index: 0;">
+			<div style="width: 800px; height: 700px; position: absolute; z-index: 0;" id="pasteTextHolder">
 				<div id="pasteText">Ctrl-V to paste</div>
 			</div>
 		</div>
