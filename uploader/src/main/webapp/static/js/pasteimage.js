@@ -88,13 +88,15 @@ function postCanvasToURL(url, name, fn, canvas, type) {
 }
 
 $("#button-upload").on("click", function () {
+	$("#pleaseWaitDialog").modal();
 	var cnv = $("#cnv0")[0];
 	if (cnv.width > 0 && cnv.height > 0) {
 		var xhr = postCanvasToURL(app.uploadUrl, "fileUpload", "screenshot.png", cnv, "image/png");
 		xhr.onreadystatechange = function() {
 			if (this.readyState == 4) {
 				if (this.status == 200) {
-					var response = $.parseJSON(this.responseText)
+					var response = $.parseJSON(this.responseText);
+					$("#pleaseWaitDialog").modal("hide");
 					$("#myModalLabel").text("Success");
 					$("#myModalBody").html('Here\'s your link: <input type="text" '
 							+ 'value="'
