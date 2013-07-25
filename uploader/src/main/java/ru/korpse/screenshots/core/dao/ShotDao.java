@@ -42,20 +42,6 @@ public class ShotDao {
 		return result;
 	}
 	
-	private String hash(String what) {
-		MessageDigest messageDigest;
-		String result = "";
-		try {
-			messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(what.getBytes());
-			result = new String(messageDigest.digest());
-			return result;
-		}
-		catch (NoSuchAlgorithmException e) {
-			return null;
-		}
-	}
-	
 	public void save(Shot item) {
 		if (StringUtils.isEmpty(item.getBlobKey())) {
 			return;

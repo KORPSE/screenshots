@@ -256,6 +256,8 @@ app.cnvController = {
 		this.doAction(action);
 		this.actionStack.push(action);
 		this.mergeCnv();
+		
+		$("#pasteText").hide();
 	},
 
 	down: function (e) {
