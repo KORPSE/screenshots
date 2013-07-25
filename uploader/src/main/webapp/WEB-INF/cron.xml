@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
-  <cron>
+<!-- <cron>
     <url>/service/test</url>
     <description>test</description>
     <schedule>every 1 minutes</schedule>
-  </cron>
-<!-- <cron>
+  </cron> -->
+ <cron>
     <url>/service/clear</url>
     <description>Clear old shots</description>
     <schedule>every 24 hours</schedule>
-  </cron> -->  
+  </cron>
 </cronentries>
