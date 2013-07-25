@@ -88,9 +88,9 @@ function postCanvasToURL(url, name, fn, canvas, type) {
 }
 
 $("#button-upload").on("click", function () {
-	$("#pleaseWaitDialog").modal();
 	var cnv = $("#cnv0")[0];
 	if (cnv.width > 0 && cnv.height > 0) {
+		$("#pleaseWaitDialog").modal();
 		var xhr = postCanvasToURL(app.uploadUrl, "fileUpload", "screenshot.png", cnv, "image/png");
 		xhr.onreadystatechange = function() {
 			if (this.readyState == 4) {
