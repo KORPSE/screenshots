@@ -14,6 +14,8 @@ import ru.korpse.screenshots.entities.Shot;
 import ru.korpse.screenshots.util.IntegrationTest;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
@@ -79,6 +81,13 @@ public class ShotDaoTest extends IntegrationTest {
 		dao.delete(shot0);
 		dao.delete(shot1);
 		dao.delete(shot2);
+	}
+	
+	@Test
+	public void testKeyGeneration() {
+		Key k1 = KeyFactory.createKey("Shot", 1);
+		Key k2 = KeyFactory.createKey("Shot", 1);
+		assertEquals(k1, k2);
 	}
 
 }

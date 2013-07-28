@@ -51,7 +51,7 @@ public class FileUploadController {
 
         dao.save(shot);
         
-    	result.put("filename", shot.getKey());
+    	result.put("filename", shot.getId());
         
         return result;
     }

@@ -54,6 +54,11 @@ public class ShotDao {
 		}
 		return convert(datastore.get(KeyFactory.stringToKey(keyString)));
 	}
+
+	public Shot getById(String id) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey("Shot", Long.parseLong(id, Character.MAX_RADIX));
+		return convert(datastore.get(key));
+	}
 	
 	@SuppressWarnings("deprecation")
 	public List<Shot> getOlderThan(Date created) {
