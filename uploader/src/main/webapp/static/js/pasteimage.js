@@ -7,7 +7,7 @@ if (!window.Clipboard) {
 	pasteCatcher.setAttribute("contenteditable", "");
 
 	pasteCatcher.className = "element-invisible";
-	document.body.appendChild(pasteCatcher);
+	document.body.insertBefore(pasteCatcher, document.body.firstChild);
  
 	// элемент должен быть в фокусе
 	pasteCatcher.focus();
