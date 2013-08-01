@@ -105,7 +105,7 @@ $("#button-upload").on("click", function () {
 										? document.URL.search("#") : document.URL.length)
 							+ 'get/'
 							+ response.filename + '" id="linkField">');
-					$("#linkField").focus(function() {
+					$("#linkField").click(function(e) {
 					    var $this = $(this);
 					    $this.select();
 	
@@ -115,6 +115,7 @@ $("#button-upload").on("click", function () {
 					        $this.unbind("mouseup");
 					        return false;
 					    });
+					    return false;
 					});
 					$('#myModal').modal();
 				} else {
