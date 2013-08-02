@@ -46,7 +46,9 @@ canvas.cnv {
 }
 
 .element-invisible {
-	position: absolute !important;
+	position: fixed !important;
+	top: -100px;
+	left: -100px;
 	height: 1px;
 	width: 1px;
 	overflow: hidden; /* we make the box 1x1 pixel and prevent overflow */
