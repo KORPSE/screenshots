@@ -95,12 +95,6 @@ canvas.cnv {
 #canvases {
 	position: relative;
 }
-#textOptions {
-	width: 820px;
-	display: none;
-	position: absolute;
-	z-index: 22;
-}
 .bigicon {
 	width: 27px !important;
 	height: 23px !important;
@@ -130,18 +124,6 @@ canvas.cnv {
 		<i>Edit, save and share your screenshots using only browser</i>
 	</div>
 	<div class="container">
-		<div class="form-inline well well-small" id="textOptions">
-			<i class="icon-white bigicon" style="background:url('static/img/glyphicons_100_font.png');"></i>
-			<input type="text" class="input-xxlarge" id="textToPut" placeholder="Text" style="height: 30px">
-			<select id="textSize" style="width:90px;">
-				<option value="10">10px</option>
-				<option value="12">12px</option>
-				<option value="16" selected="selected">16px</option>
-				<option value="20">20px</option>
-			</select>
-			<a class="icon-white pull-right" id="textOk" href="#"></a>
-		</div>
-	
 		<div id="leftBar" style="float: left; width: 50px;">
 			<div id="button-right" class="btn btn-inverse">
 				<img src="static/img/icon-cog-small.png">
@@ -248,6 +230,29 @@ canvas.cnv {
 				<div class="bar" style="width: 100%;"></div>
 			</div>
 		</div>
+	</div>
+	<div class="modal hide fade" id="textOptionsDialog" data-backdrop="static"
+		data-keyboard="false">
+		<div class="modal-header">
+			<h1>Text options</h1>
+		</div>
+		<div class="modal-body">
+			<div class="form-inline" id="textOptions">
+				<i class="icon-white bigicon" style="background:url('static/img/glyphicons_100_font.png');"></i>
+				<input type="text" class="input-xlarge" id="textToPut" placeholder="Text" style="height: 30px">
+				<select id="textSize" style="width:90px;">
+					<option value="10">10px</option>
+					<option value="12">12px</option>
+					<option value="16" selected="selected">16px</option>
+					<option value="20">20px</option>
+					<option value="24">24px</option>
+					<option value="28">28px</option>
+				</select>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" hidden="true">OK</button>
+		</div>		
 	</div>
 		
 </body>

@@ -204,12 +204,15 @@ app.actionPerformers[MODE_BACKGROUND] = {
 
 app.actionPerformers[MODE_TEXT] = {
 		prepare: function () {
-			$("#textOptions").show("fast");
-			$("#textOptions").offset({
-				left: -app.state.dx,
-				top: -app.state.dy - 60
+			$("#textOptionsDialog").modal();
+			$("#textOptionsDialog").on("hide", function () {
+				$("#textToPut").prop("disabled", true);
 			});
-			$("#textToPut").focus();
+			$("#textOptionsDialog").on("shown", function () {
+				$("#textToPut").prop("disabled", false);
+				$("#textToPut").focus();
+			});
+			
 		},
 		execute: function (action) {
 			var text;
@@ -236,7 +239,7 @@ app.actionPerformers[MODE_TEXT] = {
 			$("#textToPut").val("");
 		},
 		allowed: function () {
-			return !$("#textOptions").is(":visible");
+			return $("#textToPut").val().length > 0;
 		}
 	}
 
@@ -450,9 +453,9 @@ $(window).load(function() {
 		});
 	});
 	
-	$("#textToPut").on("keypress", function (e) {
+	$("#textOptionsDialog").on("keypress", function (e) {
 		if (e.which === 13) {
-			$("#textOptions").hide("fast");
+			$("#textOptionsDialog").modal("hide");
 		}
 	});
 	
