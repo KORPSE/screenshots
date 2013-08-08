@@ -4,12 +4,10 @@ MODE_DRAW_LINE = 2;
 MODE_DRAW_RECTANGLE = 3;
 MODE_PEN = 4;
 MODE_BACKGROUND = 5;
-MODE_TEXT = 6;
 BUTTON_RELEASED = 0;
 BUTTON_PRESSED = 1;
 STROKE_STYLE = "rgba(255, 0, 0, 0.5)";
 STROKE_WIDTH = 5;
-TEXT_SIZE = 16;
 LINE_ENDS = "round";
 
 var app = {};
@@ -23,13 +21,11 @@ app.state = {
 	currentAction: null,
 	strokeStyle: STROKE_STYLE,
 	strokeWidth: STROKE_WIDTH,
-	textSize: TEXT_SIZE,
 	tools : {
 		"actionPen" : MODE_PEN,
 		"actionLine" : MODE_DRAW_LINE,
 		"actionRectangle" : MODE_DRAW_RECTANGLE,
 		"actionCrop" : MODE_CROP,
-		"actionText" : MODE_TEXT,
 		"default" : MODE_VIEW
 	}
 };
@@ -202,44 +198,6 @@ app.actionPerformers[MODE_BACKGROUND] = {
 	post: function () {}
 }
 
-app.actionPerformers[MODE_TEXT] = {
-		prepare: function () {
-			$("#textOptions").show("fast");
-			$("#textOptions").offset({
-				left: -app.state.dx,
-				top: -app.state.dy - 60
-			});
-			$("#textToPut").focus();
-		},
-		execute: function (action) {
-			var text;
-			if (action.text) {
-				text = action.text;
-			} else if ($("#textToPut").val() != "") {
-				text = $("#textToPut").val();
-				action.text = text;
-			} else {
-				return;
-			}
-			var ctx = $("#cnv")[0].getContext("2d");
-			ctx.fillStyle = action.strokeStyle;
-			ctx.textAlign = "center";
-		    ctx.textBaseline = "middle";
-		    ctx.font = action.textSize + "pt Arial";
-			ctx.fillText(action.text, action.x, action.y);
-		},
-		update: function (action, x, y) {
-			action.x = x;
-			action.y = y;
-		},
-		post: function () {
-			$("#textToPut").val("");
-		},
-		allowed: function () {
-			return !$("#textOptions").is(":visible");
-		}
-	}
-
 /**
  * Controller
  */
@@ -307,20 +265,13 @@ app.cnvController = {
 		if (app.state.mode == MODE_VIEW) {
 			return;
 		}
-		var allowed = true;
-		if (app.actionPerformers[app.state.mode]
-				&& app.actionPerformers[app.state.mode].allowed) {
-			allowed = app.actionPerformers[app.state.mode].allowed();
-		}
-		if (app.state.currentAction == null && allowed) {
+		if (app.state.currentAction == null) {
 			this.actionForwardStack = new Array();
 			var a = new Action(e.pageX + app.state.dx, e.pageY + app.state.dy, app.state.mode);
 			a.strokeStyle = app.state.strokeStyle;
 			a.strokeWidth = app.state.strokeWidth;
-			a.textSize = app.state.textSize;
 			$(document).trigger("setCurrentAction", [ a ]);
 			$("#cnv").on("mousemove", this.drag);
-			this.drag(e);
 		}
 	},
 
@@ -378,16 +329,12 @@ $(window).load(function() {
 		$("#cnv").on("mousedown", function (e) { app.cnvController.down(e) });
 		$("#cnv").on("mouseup", function (e) { app.cnvController.up(e) });
 		app.cnvController.updateDeltas();
-		$(document).off("keydown");
-		$(document).keydown(function(e) {
-			if(e.which === 90 && e.ctrlKey) {
+		$(document).off("keypress");
+		$(document).keypress(function(e) {
+			if(e.which == 26 || e.which == 122) {
 				app.cnvController.undo();
-				e.preventDefault();
-				return false;
-			} else if(e.which === 89 && e.ctrlKey) {
+			} else if(e.which == 25 || e.which == 121) {
 				app.cnvController.redo();
-				e.preventDefault();
-				return false;
 			}
 			e.stopPropagation();
 		});
@@ -410,7 +357,7 @@ $(window).load(function() {
 		app.cnvController.mergeCnv();
 	});
 
-	$("#button-right").toolbar({
+	$('#button-right').toolbar({
 		content: '#user-options',
 		position: 'right',
 		hideOnClick: true
@@ -432,7 +379,6 @@ $(window).load(function() {
 					app.actionPerformers[app.state.mode].prepare();
 				}
 			}
-			$('#button-right').toolbar("hide");
 		});
 
 	refreshEventHandlers();
@@ -450,22 +396,9 @@ $(window).load(function() {
 		});
 	});
 	
-	$("#textToPut").on("keypress", function (e) {
-		if (e.which === 13) {
-			$("#textOptions").hide("fast");
-		}
-	});
-	
-	$("#textSize").on("change", function () {
-		app.state.textSize = $(this).val();
-	});
-	
-	$("#textOk").on("click", function () {
-		$("#textOptions").hide("fast");
-	});
 });
 
-Action = function (x, y, type) {
+Action = function (x, y, type, brushStyle) {
 	this.type = type;
 	this.x0 = x;
 	this.y0 = y;

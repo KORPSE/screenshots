@@ -46,9 +46,7 @@ canvas.cnv {
 }
 
 .element-invisible {
-	position: fixed !important;
-	top: -100px;
-	left: -100px;
+	position: absolute !important;
 	height: 1px;
 	width: 1px;
 	overflow: hidden; /* we make the box 1x1 pixel and prevent overflow */
@@ -95,22 +93,6 @@ canvas.cnv {
 #canvases {
 	position: relative;
 }
-#textOptions {
-	width: 820px;
-	display: none;
-	position: absolute;
-	z-index: 22;
-}
-.bigicon {
-	width: 27px !important;
-	height: 23px !important;
-	margin-top: -2px;
-}
-#textOk {
-	width: 25px;
-	height: 19px;
-	background:url('static/img/glyphicons_206_ok_2.png');
-}
 </style>
 <link href="static/toolbar/jquery.toolbars.css" rel="stylesheet">
 <script src="static/toolbar/jquery.toolbar.min.js"></script>
@@ -130,18 +112,6 @@ canvas.cnv {
 		<i>Edit, save and share your screenshots using only browser</i>
 	</div>
 	<div class="container">
-		<div class="form-inline well well-small" id="textOptions">
-			<i class="icon-white bigicon" style="background:url('static/img/glyphicons_100_font.png');"></i>
-			<input type="text" class="input-xxlarge" id="textToPut" placeholder="Text" style="height: 30px">
-			<select id="textSize" style="width:90px;">
-				<option value="10">10px</option>
-				<option value="12">12px</option>
-				<option value="16" selected="selected">16px</option>
-				<option value="20">20px</option>
-			</select>
-			<a class="icon-white pull-right" id="textOk" href="#"></a>
-		</div>
-	
 		<div id="leftBar" style="float: left; width: 50px;">
 			<div id="button-right" class="btn btn-inverse">
 				<img src="static/img/icon-cog-small.png">
@@ -176,9 +146,9 @@ canvas.cnv {
 			<div id="canvases">
 				<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
 				<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
-				<div style="width: 800px; height: 700px; position: absolute; z-index: 0;" id="pasteTextHolder">
-					<div id="pasteText">Ctrl-V to paste</div>
-				</div>
+			</div>
+			<div style="width: 800px; height: 700px; position: absolute; z-index: 0;" id="pasteTextHolder">
+				<div id="pasteText">Ctrl-V to paste</div>
 			</div>
 		</div>
 	</div>
@@ -205,9 +175,6 @@ canvas.cnv {
 		</a>
 		<a href="#" id="actionRectangle">
 			<i class="icon-white" style="background: url(static/img/glyphicons_094_vector_path_square.png)"></i>
-		</a>
-		<a href="#" id="actionText">
-			<i class="icon-white" style="background: url(static/img/glyphicons_103_text_underline.png)"></i>
 		</a>
 		<a href="#" id="actionCrop">
 			<i class="icon-white" style="background: url(static/img/glyphicons_093_crop.png)"></i>
@@ -249,6 +216,5 @@ canvas.cnv {
 			</div>
 		</div>
 	</div>
-		
 </body>
 </html>

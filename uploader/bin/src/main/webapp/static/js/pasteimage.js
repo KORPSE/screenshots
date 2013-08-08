@@ -7,15 +7,11 @@ if (!window.Clipboard) {
 	pasteCatcher.setAttribute("contenteditable", "");
 
 	pasteCatcher.className = "element-invisible";
-	document.body.insertBefore(pasteCatcher, document.body.firstChild);
+	document.body.appendChild(pasteCatcher);
  
 	// элемент должен быть в фокусе
 	pasteCatcher.focus();
-	document.addEventListener("click", function(e) {
-		if (document.getElementById("textOptions") != e.target.parentNode) {
-			pasteCatcher.focus();
-		}
-	});
+	document.addEventListener("click", function() { pasteCatcher.focus(); });
 } 
 // добавляем обработчик событию
 window.addEventListener("paste", pasteHandler);
@@ -109,7 +105,7 @@ $("#button-upload").on("click", function () {
 										? document.URL.search("#") : document.URL.length)
 							+ 'get/'
 							+ response.filename + '" id="linkField">');
-					$("#linkField").click(function(e) {
+					$("#linkField").focus(function() {
 					    var $this = $(this);
 					    $this.select();
 	
@@ -119,7 +115,6 @@ $("#button-upload").on("click", function () {
 					        $this.unbind("mouseup");
 					        return false;
 					    });
-					    return false;
 					});
 					$('#myModal').modal();
 				} else {
