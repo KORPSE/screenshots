@@ -13,6 +13,6 @@
 	<cron>
 		<url>/service/flushKeys</url>
 		<description>Flush secureKey information</description>
-		<schedule>every 24 hours</schedule>
+		<schedule>every 2 hours</schedule>
 	</cron>
 </cronentries>

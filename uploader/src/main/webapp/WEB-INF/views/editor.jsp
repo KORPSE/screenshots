@@ -8,6 +8,7 @@
 	media="screen">
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="static/js/imageeditor.js"></script>
+<link href="static/favicon.ico" rel="icon" type="image/x-icon">
 <style>
 #canvasHolder {
 	width: 840px;

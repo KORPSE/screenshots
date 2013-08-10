@@ -60,6 +60,7 @@ public class FileUploadController {
 			result.put("error", "File not loaded");
 			return result;
         }
+        secureKeyService.deleteKey(secureKey);
         Shot shot = new Shot();
         shot.setBlobKey(blobKey.getKeyString());
         shot.setCreated(new Date());

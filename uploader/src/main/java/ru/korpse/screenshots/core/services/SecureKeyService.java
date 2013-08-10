@@ -67,6 +67,13 @@ public class SecureKeyService {
 		}
 	}
 	
+	public void deleteKey(String key) {
+		if (StringUtils.isEmpty(key)) {
+			return;
+		}
+		datastoreService.delete(KeyFactory.createKey("SecureKey", key));
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void deleteOld() {
 		Query q = new Query("SecureKey");

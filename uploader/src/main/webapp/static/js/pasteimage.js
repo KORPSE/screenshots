@@ -130,6 +130,7 @@ $("#button-upload").on("click", function () {
 				}
 				$.get("getuploadurl").done(function (data, textStatus, jqXHR) {
 					app.uploadUrl = jqXHR.responseJSON.uploadUrl;
+					app.secureKey = jqXHR.responseJSON.secureKey;
 				});
 			}
 		}
