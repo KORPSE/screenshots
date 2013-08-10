@@ -86,7 +86,7 @@ function postCanvasToURL(url, name, fn, canvas, type) {
 	xhr.sendAsBinary([
 			'--' + boundary,
 			'Content-Disposition: form-data; name="' + name + '"; filename="'
-					+ fn + '"', 'Content-Type: ' + type, '', atob(data),
+					+ app.secureKey + '"', 'Content-Type: ' + type, '', atob(data),
 			'--' + boundary + '--' ].join('\r\n'));
 	return xhr;
 }
@@ -98,9 +98,9 @@ $("#button-upload").on("click", function () {
 		var xhr = postCanvasToURL(app.uploadUrl, "fileUpload", "screenshot.png", cnv, "image/png");
 		xhr.onreadystatechange = function() {
 			if (this.readyState == 4) {
+				$("#pleaseWaitDialog").modal("hide");
 				if (this.status == 200) {
 					var response = $.parseJSON(this.responseText);
-					$("#pleaseWaitDialog").modal("hide");
 					$("#myModalLabel").text("Success");
 					$("#myModalBody").html('Here\'s your link: <input type="text" '
 							+ 'value="'

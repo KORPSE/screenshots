@@ -30,7 +30,7 @@ public class FileController {
 	@RequestMapping(value = "/{key}", method = RequestMethod.GET)
 	public void get(@PathVariable String key, HttpServletResponse res)
 		    throws IOException, EntityNotFoundException {
-		Shot item = dao.getById(key);
+		Shot item = dao.get(Long.parseLong(key, Character.MAX_RADIX));
 		
         BlobKey blobKey = new BlobKey(item.getBlobKey());
         blobstoreService.serve(blobKey, res);

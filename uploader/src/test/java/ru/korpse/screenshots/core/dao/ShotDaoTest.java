@@ -3,7 +3,6 @@ package ru.korpse.screenshots.core.dao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,11 +44,11 @@ public class ShotDaoTest extends IntegrationTest {
 		shot.setCreated(new Date());
 		dao.save(shot);
 		
-		assertNotNull(shot.getKey());
-		Shot shot2 = dao.get(shot.getKey());
+		assertNotNull(shot.getId());
+		Shot shot2 = dao.get(shot.getId());
 		assertEquals(shot, shot2);
 
-		dao.delete(shot);
+		dao.delete(shot.getId());
 	}
 	
 	@Test
@@ -75,12 +74,8 @@ public class ShotDaoTest extends IntegrationTest {
 		shot2.setCreated(date2);
 		dao.save(shot2);
 		
-		List<Shot> lst = dao.getOlderThan(marginDt);
-		assertEquals(lst.size(), 2);
-		
-		dao.delete(shot0);
-		dao.delete(shot1);
-		dao.delete(shot2);
+		long cnt = dao.deleteOlderThan(marginDt);
+		assertEquals(cnt, 2);
 	}
 	
 	@Test

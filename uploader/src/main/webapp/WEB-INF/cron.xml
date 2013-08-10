@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
-<!-- <cron>
-    <url>/service/test</url>
-    <description>test</description>
-    <schedule>every 1 minutes</schedule>
-  </cron> -->
- <cron>
-    <url>/service/clear</url>
-    <description>Clear old shots</description>
-    <schedule>every 24 hours</schedule>
-  </cron>
+	<cron>
+		<url>/service/clear</url>
+		<description>Clear old shots</description>
+		<schedule>every 24 hours</schedule>
+	</cron>
+	<cron>
+		<url>/service/flush</url>
+		<description>Flush client hit information</description>
+		<schedule>every 24 hours</schedule>
+	</cron>
+	<cron>
+		<url>/service/flushKeys</url>
+		<description>Flush secureKey information</description>
+		<schedule>every 24 hours</schedule>
+	</cron>
 </cronentries>

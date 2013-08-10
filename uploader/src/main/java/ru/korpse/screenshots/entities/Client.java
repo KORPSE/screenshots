@@ -2,7 +2,6 @@ package ru.korpse.screenshots.entities;
 
 import java.util.Date;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -11,19 +10,14 @@ import lombok.Data;
 
 @Data
 @PersistenceCapable(detachable = "true")
-public class Shot {
+public class Client {
 	
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	public String address;
 	
 	@Persistent
-	private String blobKey;
-	
+	public Date firstHitTime;
+
 	@Persistent
-	private Date created;
-	
-	public String getKey() {
-		return Long.toString(id, Character.MAX_RADIX);
-	}
+	public long hitCount;
 }

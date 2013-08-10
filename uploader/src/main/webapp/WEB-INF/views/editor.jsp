@@ -1,9 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
-<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
-<%
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -117,7 +112,8 @@ canvas.cnv {
 </head>
 <body>
 	<script>
-		app.uploadUrl = "<%= blobstoreService.createUploadUrl("/upload") %>";
+		app.uploadUrl = "${uploadUrl}";
+		app.secureKey = "${secureKey}";
 	</script>
 	<div class="page-header" align="center">
 		<h1>X-shot</h1>

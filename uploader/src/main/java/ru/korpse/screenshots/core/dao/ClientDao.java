@@ -1,19 +1,18 @@
-package ru.korpse.screenshots.core.	dao;
-
-import java.util.Date;
+package ru.korpse.screenshots.core.dao;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
-import ru.korpse.screenshots.entities.Shot;
+import ru.korpse.screenshots.entities.Client;
 import ru.korpse.screenshots.utils.PMF;
 
 @Repository
-public class ShotDao {
-	
-	public void save(Shot item) {
+public class ClientDao {
+
+	public void save(Client item) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
             pm.makePersistent(item);
@@ -22,39 +21,37 @@ public class ShotDao {
         }
 	}
 
-	public Shot get(long id) {
+	public Client get(String address) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			if (id <= 0) {
+			if (StringUtils.isEmpty(address)) {
 				return null;
 			}
-			Shot result = pm.getObjectById(Shot.class, id);
+			Client result = pm.getObjectById(Client.class, address);
 			return result;
 		}
 		finally {
 			pm.close();
 		}
 	}
-
-	public long deleteOlderThan(Date created) {
+	
+	public void delete(Client item) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		final Query q = pm.newQuery(Shot.class);
-		q.setFilter("created <= dateParam");
-		q.declareParameters("java.util.Date dateParam");
 		try {
-			return q.deletePersistentAll(created);
+			Client persistentItem = pm.getObjectById(Client.class, item.getAddress());
+			pm.deletePersistent(persistentItem);
 		} finally {
-			q.closeAll();
 			pm.close();
 		}
 	}
 	
-	public void delete(long id) {
+	public void deleteAll() {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			Shot persistentItem = pm.getObjectById(Shot.class, id);
-			pm.deletePersistent(persistentItem);
-		} finally {
+			Query q = pm.newQuery(Client.class);
+			q.deletePersistentAll();
+		}
+		finally {
 			pm.close();
 		}
 	}
