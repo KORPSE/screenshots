@@ -78,7 +78,7 @@ public class SecureKeyService {
 	public void deleteOld() {
 		Query q = new Query("SecureKey");
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, -1);
+		calendar.add(Calendar.HOUR, -2);
 		q.addFilter("created", FilterOperator.LESS_THAN, calendar.getTime());
 		PreparedQuery pq = datastoreService.prepare(q);
 		for (Entity item : pq.asIterable()) {
