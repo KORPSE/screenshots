@@ -24,22 +24,22 @@ var blob;
 function pasteHandler(e) {
 	// если поддерживается event.clipboardData (Chrome)
 	if (e.clipboardData && e.clipboardData.items) {
-	// получаем все содержимое буфера
-	var items = e.clipboardData.items;
-	if (items) {
-		// находим изображение
-		for (var i = 0; i < items.length; i++) {
-			if (items[i].type.indexOf("image") !== -1) {
-				// представляем изображение в виде файла
-				blob = items[i].getAsFile();
-				// создаем временный урл объекта
-				var URLObj = window.URL || window.webkitURL;
-				var source = URLObj.createObjectURL(blob);                
-				// добавляем картинку в DOM
-				createImage(source);
+		// получаем все содержимое буфера
+		var items = e.clipboardData.items;
+		if (items) {
+			// находим изображение
+			for (var i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf("image") !== -1) {
+					// представляем изображение в виде файла
+					blob = items[i].getAsFile();
+					// создаем временный урл объекта
+					var URLObj = window.URL || window.webkitURL;
+					var source = URLObj.createObjectURL(blob);                
+					// добавляем картинку в DOM
+					createImage(source);
+				}
 			}
 		}
-	}
 	// для Firefox проверяем элемент с атрибутом contenteditable
 	} else {      
 		setTimeout(checkInput, 1);
