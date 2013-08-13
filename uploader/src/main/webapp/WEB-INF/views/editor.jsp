@@ -12,7 +12,7 @@
 <style>
 #canvasHolder {
 	width: 840px;
-	height: 768px;
+	height: 740px;
 	overflow-y: scroll;
 	overflow-x: scroll;
 	border: 2px dashed #cccccc;
@@ -116,8 +116,8 @@ canvas.cnv {
 		app.uploadUrl = "${uploadUrl}";
 		app.secureKey = "${secureKey}";
 	</script>
-	<div class="page-header" align="center">
-		<h1>X-shot</h1>
+	<div class="page-header" style="margin-left: auto; margin-right:auto; width: 840px;">
+		<h1>Shoter</h1>
 		<i>Edit, save and share your screenshots using only browser</i>
 	</div>
 	<div class="container">
