@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title>x-shot: Edit, save and share your screenshots using only browser</title>
+<title>shoter.ru: Edit, save and share your screenshots using only browser</title>
 <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
 	media="screen">
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -165,7 +165,7 @@ canvas.cnv {
 	<div class="navbar navbar-fixed-bottom">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="#">x-shot</a>
+				<a class="brand" href="#">shoter.ru</a>
 				<ul class="nav">
 					<li class="divider-vertical"><a href="https://github.com/KORPSE/screenshots">GitHub</a></li>
 					<li class="divider-vertical"><a href="https://github.com/KORPSE">Author</a></li>
