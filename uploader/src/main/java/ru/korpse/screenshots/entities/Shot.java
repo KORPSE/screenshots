@@ -8,6 +8,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import lombok.Data;
+import ru.korpse.screenshots.utils.Base62;
 
 @Data
 @PersistenceCapable(detachable = "true")
@@ -24,6 +25,10 @@ public class Shot {
 	private Date created;
 	
 	public String getKey() {
-		return Long.toString(id, Character.MAX_RADIX);
+		return Base62.encode(id);
+	}
+	
+	public static long keyToId(String key) {
+		return Base62.decode(key).longValue();
 	}
 }

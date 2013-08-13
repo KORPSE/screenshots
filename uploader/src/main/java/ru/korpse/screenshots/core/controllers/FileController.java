@@ -19,7 +19,7 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
 @Controller
-@RequestMapping(value = "/get")
+@RequestMapping(value = "/")
 public class FileController {
 	
 	@Autowired
@@ -30,7 +30,7 @@ public class FileController {
 	@RequestMapping(value = "/{key}", method = RequestMethod.GET)
 	public void get(@PathVariable String key, HttpServletResponse res)
 		    throws IOException, EntityNotFoundException {
-		Shot item = dao.get(Long.parseLong(key, Character.MAX_RADIX));
+		Shot item = dao.get(Shot.keyToId(key));
 		
         BlobKey blobKey = new BlobKey(item.getBlobKey());
         blobstoreService.serve(blobKey, res);

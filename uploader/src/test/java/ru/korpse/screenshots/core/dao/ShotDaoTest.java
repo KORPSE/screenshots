@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.korpse.screenshots.entities.Shot;
 import ru.korpse.screenshots.util.IntegrationTest;
+import ru.korpse.screenshots.utils.Base62;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
@@ -83,6 +84,11 @@ public class ShotDaoTest extends IntegrationTest {
 		Key k1 = KeyFactory.createKey("Shot", 1);
 		Key k2 = KeyFactory.createKey("Shot", 1);
 		assertEquals(k1, k2);
+	}
+	
+	@Test
+	public void base62Test() {
+		assertEquals(5105650963054592L,Shot.keyToId(Base62.encode(5105650963054592L)));
 	}
 
 }

@@ -106,8 +106,7 @@ $("#button-upload").on("click", function () {
 							+ 'value="'
 							+ document.URL.substr(0,
 									document.URL.search("#") > -1
-										? document.URL.search("#") : document.URL.length)
-							+ 'get/'
+										? document.URL.search("#") : document.URL.length).replace("www", "i")
 							+ response.filename + '" id="linkField">');
 					$("#linkField").click(function(e) {
 					    var $this = $(this);
