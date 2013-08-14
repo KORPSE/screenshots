@@ -165,26 +165,19 @@ app.actionPerformers[MODE_PEN] = {
 	},
 	post: function () {},
 	update: function (action, x, y) {
-		if (action.points == undefined) {
+		if (!action.points) {
 			action.points = new Array();
 			action.x0 = x;
 			action.y0 = y;
 			action.x = x;
 			action.y = y;
+			action.points.push({ x: x, y: y });
 		}
-		if (action.x0 > x) {
-			action.x0 = x;
-		}
-		if (action.x < x) {
+		if (Math.pow(action.x - x, 2) + Math.pow(action.y - y, 2) > 6) {
+			action.points.push({ x: x, y: y });
 			action.x = x;
-		}
-		if (action.y0 > y) {
-			action.y0 = y;
-		}
-		if (action.y < y) {
 			action.y = y;
 		}
-		action.points.push({ x: x, y: y });
 	}
 }
 
