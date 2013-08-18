@@ -12,7 +12,7 @@ if (!window.Clipboard) {
 	// элемент должен быть в фокусе
 	pasteCatcher.focus();
 	document.addEventListener("click", function(e) {
-		if (document.getElementById("textOptions") != e.target.parentNode) {
+		if ($(e.target).parents(".modal").length == 0) {
 			pasteCatcher.focus();
 		}
 	});
@@ -108,7 +108,7 @@ $("#button-upload").on("click", function () {
 									document.URL.search("#") > -1
 										? document.URL.search("#") : document.URL.length).replace("www", "i")
 							+ response.filename + '" id="linkField">');
-					$("#linkField").click(function(e) {
+					$("#linkField").mousedown(function(e) {
 					    var $this = $(this);
 					    $this.select();
 	
