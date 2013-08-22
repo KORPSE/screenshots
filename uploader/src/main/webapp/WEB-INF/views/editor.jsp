@@ -116,11 +116,15 @@ canvas.cnv {
 		app.uploadUrl = "${uploadUrl}";
 		app.secureKey = "${secureKey}";
 	</script>
+	<a href="https://github.com/KORPSE/screenshots"><img
+		style="position: absolute; top: 0; right: 0; border: 0;"
+		src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"
+		alt="Fork me on GitHub"></a>
 	<div class="page-header" style="margin-left: auto; margin-right:auto; width: 840px;">
 		<h1>Shoter</h1>
 		<i>Edit, save and share your screenshots using only browser</i>
 	</div>
-	<div class="container">
+	<div class="container" style="margin-bottom: 10px;">
 		<div id="leftBar" style="float: left; width: 50px;">
 			<div id="button-right" class="btn btn-inverse">
 				<img src="static/img/icon-cog-small.png">
@@ -162,17 +166,6 @@ canvas.cnv {
 		</div>
 	</div>
 	
-	<div class="navbar navbar-fixed-bottom">
-		<div class="navbar-inner">
-			<div class="container">
-				<a class="brand" href="#">shoter.ru</a>
-				<ul class="nav">
-					<li class="divider-vertical"><a href="https://github.com/KORPSE/screenshots">GitHub</a></li>
-					<li class="divider-vertical"><a href="https://github.com/KORPSE">Author</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
 	<img id="initImage" style="display: none">
 
 	<div id="user-options" style="display: none">
@@ -198,6 +191,7 @@ canvas.cnv {
 			<i class="icon-fast-forward"></i>
 		</a>
 	</div>
+	
 	<script src="static/bootstrap/js/bootstrap.min.js"></script>
 	<script src="static/js/pasteimage.js"></script>
 

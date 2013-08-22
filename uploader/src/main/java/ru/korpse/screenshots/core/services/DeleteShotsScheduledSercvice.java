@@ -24,9 +24,9 @@ public class DeleteShotsScheduledSercvice {
         cal.add(Calendar.DATE, -15);
         Date marginDt = cal.getTime();
         
-		dao.deleteOlderThan(marginDt);
+		long count = dao.deleteOlderThan(marginDt);
         
-        log.info("cleaning old shots");
+        log.info("cleaning old shots (" + count + " deleted)");
 	}
 	
 }
