@@ -126,15 +126,15 @@ canvas.cnv {
 	</div>
 	<div class="container" style="margin-bottom: 10px;">
 		<div id="leftBar" style="float: left; width: 50px;">
-			<div id="button-right" class="btn btn-inverse">
+			<div id="button-right" class="btn btn-inverse tool">
 				<img src="static/img/icon-cog-small.png">
 			</div>
-			<div id="button-color" class="btn">
+			<div id="button-color" class="btn tool">
 				<input type="hidden" class="span2" value="" >
 				<i id="color" class="icon-white" data-color="rgba(255, 0, 0, 0.5)"
 					data-color-format="rgba" style="background-color: rgba(255, 0, 0, 0.5)"></i>
 			</div>
-			<div style="display:block; padding-bottom:5px; float:left;">
+			<div style="display:block; padding-bottom:5px; float:left;" class="tool">
 				<div class="dropdown">
 					<div id="link-brushsize" class="dropdown-toggle btn" data-toggle="dropdown">
 						<i id="brush"></i>
@@ -151,7 +151,7 @@ canvas.cnv {
 					</ul>
 				</div>
 			</div>
-			<div id="button-upload" class="btn">
+			<div id="button-upload" class="btn tool">
 				<img src="static/img/glyphicons_201_upload.png">
 			</div>
 		</div>

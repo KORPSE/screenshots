@@ -262,7 +262,7 @@ app.cnvController = {
 		cnv0.getContext("2d").drawImage(cnv, 0, 0);
 		cnv.getContext("2d").clearRect(0, 0, cnv.width, cnv.height);
 	},
-
+	
 	doRedraw: function (action) {
 
 		//find last action with bitmap
@@ -294,7 +294,8 @@ app.cnvController = {
 		this.doAction(action);
 		this.actionStack.push(action);
 		this.mergeCnv();
-		
+		$("#leftBar .btn, #color").removeAttr("disabled");
+		$("#leftBar .tool").tooltip("destroy");
 		$("#pasteTextHolder").hide();
 	},
 
@@ -406,6 +407,17 @@ $(window).load(function() {
 		app.cnvController.mergeCnv();
 	});
 
+	$("#leftBar .btn, #color").attr("disabled", true);
+    $("#leftBar .btn, #color").on("click", function (e) {
+        if ($(this).attr("disabled")) {
+        	e.stopImmediatePropagation();
+        }
+    });
+    $("#leftBar .tool").tooltip( {
+    	placement: "right",
+    	title: "Please paste image first"
+    } );
+    
 	$("#button-right").toolbar({
 		content: '#user-options',
 		position: 'right',
@@ -433,9 +445,14 @@ $(window).load(function() {
 
 	refreshEventHandlers();
 	
-	$("#color").colorpicker().on('changeColor', function(ev){
+	$("#color").colorpicker().on('changeColor', function(ev) {
 		var rgb = ev.color.toRGB();	
 		app.state.strokeStyle = "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a].join(',') + ")";
+		this.style.backgroundColor = "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a].join(',') + ")";
+	});
+
+	$("#button-color").on("click", function () {
+		$("#color").colorpicker("show");
 	});
 	
 	$(".brushSize").on("click", function () {
@@ -459,6 +476,7 @@ $(window).load(function() {
 	$("#textOk").on("click", function () {
 		$("#textOptions").hide("fast");
 	});
+
 });
 
 Action = function (x, y, type) {

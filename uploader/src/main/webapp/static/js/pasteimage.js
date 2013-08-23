@@ -135,12 +135,3 @@ $("#button-upload").on("click", function () {
 		}
 	}
 });
-
-$("#color").colorpicker().on('changeColor', function(ev){
-	var rgb = ev.color.toRGB();
-	this.style.backgroundColor = "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a].join(',') + ")";
-});
-
-$("#button-color").on("click", function () {
-	$("#color").colorpicker("show");
-});
