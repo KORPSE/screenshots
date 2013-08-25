@@ -197,15 +197,39 @@ app.actionPerformers[MODE_BACKGROUND] = {
 
 app.actionPerformers[MODE_TEXT] = {
 		prepare: function () {
+			var cnv = $("#cnv")[0];
+			var ctx = cnv.getContext("2d");
+			var tmpAction = new Action(cnv.width / 2, cnv.height / 2, MODE_TEXT);
+			var self = this;
+			this.handler = function (e) {
+				ctx.clearRect(0, 0, cnv.width, cnv.height);
+				self.update(
+						tmpAction,
+						e.pageX + app.state.dx,
+						e.pageY + app.state.dy);
+				self.execute(tmpAction);
+			};
+			this.offHandler = function () {
+				$("#cnv").off("mousemove", this.handler);
+			};
+			this.outHandler = function () {
+				ctx.clearRect(0, 0, cnv.width, cnv.height);
+			};
 			$("#textOptionsDialog").modal();
+			var performer = this;
 			$("#textOptionsDialog").on("hide", function () {
 				$("#textToPut").prop("disabled", true);
+				$("#cnv").on("mousemove", performer.handler);
+				$("#cnv").on("mouseup", performer.offHandler);
+				$("#cnv").on("mouseout", performer.outHandler);
+				tmpAction.strokeStyle = app.state.strokeStyle;
+				tmpAction.strokeWidth = app.state.strokeWidth;
+				tmpAction.textSize = app.state.textSize;
 			});
 			$("#textOptionsDialog").on("shown", function () {
 				$("#textToPut").prop("disabled", false);
 				$("#textToPut").focus();
 			});
-			
 		},
 		execute: function (action) {
 			var text;
@@ -229,7 +253,14 @@ app.actionPerformers[MODE_TEXT] = {
 			action.y = y;
 		},
 		post: function () {
+			var ctx = $("#cnv")[0].getContext("2d");
 			$("#textToPut").val("");
+			if (this.handler) {
+				$("#cnv").off("mousemove", this.handler);
+				$("#cnv").off("mouseup", this.offHandler);
+				$("#cnv").off("mouseout", this.outHandler);
+				this.offHandler();
+			}
 		},
 		allowed: function () {
 			return $("#textToPut").val().length > 0;
@@ -288,8 +319,14 @@ app.cnvController = {
 			this.mergeCnv();
 		}
 	},
+	
+	clearCnv: function () {
+		var cnv = $("#cnv")[0];
+		var ctx = cnv.getContext("2d");
+		ctx.clearRect(0, 0, cnv.width, cnv.height);
+	},
 
-	setBack: function() {
+	setBack: function () {
 		var action = new Action(0, 0, MODE_BACKGROUND);
 		this.doAction(action);
 		this.actionStack.push(action);
@@ -316,7 +353,7 @@ app.cnvController = {
 			a.strokeWidth = app.state.strokeWidth;
 			a.textSize = app.state.textSize;
 			$(document).trigger("setCurrentAction", [ a ]);
-			$("#cnv").on("mousemove", this.drag);
+			$("#cnv").on("mousemove", function (e) { app.cnvController.drag(e); });
 			this.drag(e);
 		}
 	},
@@ -329,9 +366,7 @@ app.cnvController = {
 
 	drag: function (e) {
 		if (app.state.currentAction != null) {
-			var cnv = $("#cnv")[0];
-			var ctx = cnv.getContext("2d");
-			ctx.clearRect(0, 0, cnv.width, cnv.height);
+			this.clearCnv();
 			if (app.actionPerformers[app.state.currentAction.type].update) {
 				app.actionPerformers[app.state.currentAction.type]
 					.update(
@@ -407,7 +442,9 @@ $(window).load(function() {
 		app.cnvController.mergeCnv();
 	});
 
-	$("#leftBar .btn, #color").attr("disabled", true);
+	if(app.cnvController.actionStack.length == 0) {
+		$("#leftBar .btn, #color").attr("disabled", true);
+	}
     $("#leftBar .btn, #color").on("click", function (e) {
         if ($(this).attr("disabled")) {
         	e.stopImmediatePropagation();
@@ -426,7 +463,9 @@ $(window).load(function() {
 		.on('toolbarItemClick', function (event, button) {
 			if (app.cnvController.actionStack.length > 0) {
 				$('[id^="action"]').removeClass("selected");
-				$(button).addClass("selected");
+				if (button.id != "undo" && button.id != "redo") {
+					$(button).addClass("selected");
+				}
 				if (button.id == "undo") {
 					app.cnvController.undo();
 				} else if (button.id == "redo") {
@@ -437,6 +476,7 @@ $(window).load(function() {
 						$(document).trigger("refreshEventHandlers");
 					}
 					app.state.mode = app.state.tools[button.id];
+					app.cnvController.clearCnv();
 					app.actionPerformers[app.state.mode].prepare();
 				}
 			}
