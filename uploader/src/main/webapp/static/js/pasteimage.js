@@ -1,22 +1,23 @@
-// проверяем, поддерживает ли браузер объект Clipboard
-// если нет создаем элемент с атрибутом contenteditable
-if (!window.Clipboard) {
-	var pasteCatcher = document.createElement("div");
+// создаем фиктивный div с аттрибутом contenteditable
+// на случай, если браузер не поддерживает вставку в произвольное место
+// e.x. Safari for mac, FF
 
-	// Firefox вставляет все изображения в элементы с contenteditable
-	pasteCatcher.setAttribute("contenteditable", "");
+var pasteCatcher = document.createElement("div");
 
-	pasteCatcher.className = "element-invisible";
-	document.body.insertBefore(pasteCatcher, document.body.firstChild);
- 
-	// элемент должен быть в фокусе
-	pasteCatcher.focus();
-	document.addEventListener("click", function(e) {
-		if ($(e.target).parents(".modal").length == 0) {
-			pasteCatcher.focus();
-		}
-	});
-} 
+// будем вставлять изображение в элемент с contenteditable
+pasteCatcher.setAttribute("contenteditable", "");
+
+pasteCatcher.className = "element-invisible";
+document.body.insertBefore(pasteCatcher, document.body.firstChild);
+
+// элемент должен быть в фокусе
+pasteCatcher.focus();
+document.addEventListener("click", function(e) {
+	if ($(e.target).parents(".modal").length == 0) {
+		pasteCatcher.focus();
+	}
+});
+
 // добавляем обработчик событию
 window.addEventListener("paste", pasteHandler);
 var blob;
