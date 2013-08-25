@@ -452,7 +452,7 @@ $(window).load(function() {
     });
     $("#leftBar .tool").tooltip( {
     	placement: "right",
-    	title: "Please paste image first"
+    	title: app.message.please
     } );
     
 	$("#button-right").toolbar({
@@ -515,6 +515,11 @@ $(window).load(function() {
 	
 	$("#textOk").on("click", function () {
 		$("#textOptions").hide("fast");
+	});
+	
+	$("#languageButton").on("click", function () {
+		var newVal = app.locale == "ru" ? "en" : "ru";
+		window.location.href = "/?lang=" + newVal;
 	});
 
 });

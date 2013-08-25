@@ -1,15 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title>shoter.ru: Edit, save and share your screenshots using only browser</title>
+<title>shoter.ru: <spring:message code="msg.subtitle"/></title>
 <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
 	media="screen">
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="static/js/imageeditor.js"></script>
 <link href="static/favicon.ico" rel="icon" type="image/x-icon">
 <style>
+html {
+	height: 100%;
+}
 #canvasHolder {
 	width: 840px;
 	height: 740px;
@@ -80,13 +84,20 @@ canvas.cnv {
 	border-radius: 50%;
 }
 #pasteText {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	margin: 0px auto;
 	color: #CCCCCC;
 	font-size: large;
 	z-index: 1;
+}
+#pasteTextHolder {
+    text-align: center;
+    display:table-cell;
+    vertical-align:middle;
+	text-align: center;
+	display:table-cell;
+	vertical-align:middle;
+	z-index: 0;
+	width: 825px;
+	height: 725px;
 }
 #canvases {
 	position: relative;
@@ -115,14 +126,22 @@ canvas.cnv {
 	<script>
 		app.uploadUrl = "${uploadUrl}";
 		app.secureKey = "${secureKey}";
+		app.locale = '<spring:message code="locale"/>';
+		app.message = {
+			link: '<spring:message code="msg.link"/>',
+			fail: '<spring:message code="msg.fail"/>',
+			please: '<spring:message code="msg.please"/>',
+			success: '<spring:message code="msg.success"/>'
+		};
 	</script>
 	<a href="https://github.com/KORPSE/screenshots"><img
 		style="position: absolute; top: 0; right: 0; border: 0;"
 		src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"
 		alt="Fork me on GitHub"></a>
 	<div class="page-header" style="margin-left: auto; margin-right:auto; width: 840px;">
+		<button class="btn btn-small btn-primary pull-right" id="languageButton">rus/en</button>
 		<h1>Shoter</h1>
-		<i>Edit, save and share your screenshots using only browser</i>
+		<i><spring:message code="msg.subtitle"/></i>
 	</div>
 	<div class="container" style="margin-bottom: 10px;">
 		<div id="leftBar" style="float: left; width: 50px;">
@@ -159,8 +178,8 @@ canvas.cnv {
 			<div id="canvases">
 				<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
 				<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
-				<div style="width: 800px; height: 700px; position: absolute; z-index: 0;" id="pasteTextHolder">
-					<div id="pasteText">Ctrl-V to paste</div>
+				<div id="pasteTextHolder">
+					<div id="pasteText"><spring:message code="msg.paste"/></div>
 				</div>
 			</div>
 		</div>
@@ -214,7 +233,7 @@ canvas.cnv {
 	<div class="modal hide fade" id="pleaseWaitDialog" data-backdrop="static"
 		data-keyboard="false">
 		<div class="modal-header">
-			<h1>Processing...</h1>
+			<h1><spring:message code="msg.processing"/></h1>
 		</div>
 		<div class="modal-body">
 			<div class="progress progress-striped active">
@@ -225,7 +244,7 @@ canvas.cnv {
 	<div class="modal hide fade" id="textOptionsDialog" data-backdrop="static"
 		data-keyboard="false">
 		<div class="modal-header">
-			<h1>Text options</h1>
+			<h1><spring:message code="msg.textOptions"/></h1>
 		</div>
 		<div class="modal-body">
 			<div class="form-inline" id="textOptions">

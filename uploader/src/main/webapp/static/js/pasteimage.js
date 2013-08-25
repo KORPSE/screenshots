@@ -102,12 +102,12 @@ $("#button-upload").on("click", function () {
 				$("#pleaseWaitDialog").modal("hide");
 				if (this.status == 200) {
 					var response = $.parseJSON(this.responseText);
-					$("#myModalLabel").text("Success");
-					$("#myModalBody").html('Here\'s your link: <input type="text" '
+					$("#myModalLabel").text(app.message.success);
+					$("#myModalBody").html(app.message.link + ' <input type="text" '
 							+ 'value="'
 							+ document.URL.substr(0,
-									document.URL.search("#") > -1
-										? document.URL.search("#") : document.URL.length).replace("www", "i")
+									document.URL.search("[#|\?]") > -1
+										? document.URL.search("[#|\?]") : document.URL.length).replace("www", "i")
 							+ response.filename + '" id="linkField">');
 					$("#linkField").mousedown(function(e) {
 					    var $this = $(this);
@@ -123,9 +123,13 @@ $("#button-upload").on("click", function () {
 					});
 					$('#myModal').modal();
 				} else {
-					var response = $.parseJSON(this.responseText)
-					$("#myModalLabel").text("Something goes wrong");
-					$("#myModalBody").html(response.error);
+					$("#myModalLabel").text(app.message.fail);
+					try {
+						var response = $.parseJSON(this.responseText);
+						$("#myModalBody").html(response.error);
+					} catch (e) {
+						$("#myModalBody").html("");
+					}
 					$('#myModal').modal();
 				}
 				$.get("getuploadurl").done(function (data, textStatus, jqXHR) {
