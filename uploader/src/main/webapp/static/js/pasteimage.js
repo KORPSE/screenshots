@@ -63,7 +63,7 @@ function createImage(source) {
 	pastedImage.src = source;
 	pastedImage.onload = function() {
 		app.cnvController.setBack();
-	}
+	};
 }
 
 if (XMLHttpRequest.prototype.sendAsBinary === undefined) {
@@ -72,7 +72,7 @@ if (XMLHttpRequest.prototype.sendAsBinary === undefined) {
 			return c.charCodeAt(0) & 0xff;
 		});
 		this.send(new Uint8Array(bytes).buffer);
-	}
+	};
 }
 
 function postCanvasToURL(url, name, fn, canvas, type) {
@@ -137,6 +137,6 @@ $("#button-upload").on("click", function () {
 					app.secureKey = jqXHR.responseJSON.secureKey;
 				});
 			}
-		}
+		};
 	}
 });

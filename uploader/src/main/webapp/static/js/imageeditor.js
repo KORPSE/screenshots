@@ -57,7 +57,7 @@ app.actionPerformers[MODE_DRAW_LINE] = {
 		action.x = x;
 		action.y = y;
 	}
-}
+};
 
 app.actionPerformers[MODE_DRAW_RECTANGLE] = {
 	prepare: function() {},
@@ -76,9 +76,10 @@ app.actionPerformers[MODE_DRAW_RECTANGLE] = {
 		action.x = x;
 		action.y = y;
 	}
-}
+};
 
 app.actionPerformers[MODE_CROP] = {
+	unrepeatable: true,
 	jcropApi: null,
 	prepare: function () {
 		var jcropApi = {};
@@ -142,7 +143,7 @@ app.actionPerformers[MODE_CROP] = {
 		ctx.canvas.removeAttribute("style");
 		this.jcropApi = null;
 	}
-}
+};
 
 app.actionPerformers[MODE_PEN] = {
 	prepare: function () {},
@@ -179,7 +180,7 @@ app.actionPerformers[MODE_PEN] = {
 			action.y = y;
 		}
 	}
-}
+};
 
 app.actionPerformers[MODE_BACKGROUND] = {
 	prepare: function () {},
@@ -193,7 +194,7 @@ app.actionPerformers[MODE_BACKGROUND] = {
 		ctx.drawImage($("#initImage")[0], 0, 0);
 	},
 	post: function () {}
-}
+};
 
 app.actionPerformers[MODE_TEXT] = {
 		prepare: function () {
@@ -253,7 +254,6 @@ app.actionPerformers[MODE_TEXT] = {
 			action.y = y;
 		},
 		post: function () {
-			var ctx = $("#cnv")[0].getContext("2d");
 			$("#textToPut").val("");
 			if (this.handler) {
 				$("#cnv").off("mousemove", this.handler);
@@ -265,7 +265,7 @@ app.actionPerformers[MODE_TEXT] = {
 		allowed: function () {
 			return $("#textToPut").val().length > 0;
 		}
-	}
+	};
 
 /**
  * Controller
@@ -398,7 +398,7 @@ app.cnvController = {
 		app.state.dx = -cnv.offsetLeft + $(app.cnvHolder).scrollLeft();
 		app.state.dy = -cnv.offsetTop + $(app.cnvHolder).scrollTop();
 	}
-}
+};
 
 
 //init
@@ -407,8 +407,8 @@ $(window).load(function() {
 	function refreshEventHandlers () {
 		app.cnvHolder = $("#canvasHolder")[0];
 		$("#cnv").off("**");
-		$("#cnv").on("mousedown", function (e) { app.cnvController.down(e) });
-		$("#cnv").on("mouseup", function (e) { app.cnvController.up(e) });
+		$("#cnv").on("mousedown", function (e) { app.cnvController.down(e); });
+		$("#cnv").on("mouseup", function (e) { app.cnvController.up(e); });
 		app.cnvController.updateDeltas();
 		$(document).off("keydown");
 		$(document).keydown(function(e) {
@@ -438,6 +438,9 @@ $(window).load(function() {
 		app.actionPerformers[app.state.mode].post();
 		refreshEventHandlers();
 		app.cnvController.actionStack.push(app.state.currentAction);
+		if (app.actionPerformers[app.state.mode].unrepeatable) {
+			app.state.mode = MODE_VIEW;
+		}
 		app.state.currentAction = null;
 		app.cnvController.mergeCnv();
 	});
@@ -521,6 +524,8 @@ $(window).load(function() {
 		var newVal = app.locale == "ru" ? "en" : "ru";
 		window.location.href = "/?lang=" + newVal;
 	});
+	
+	$("#faq").popover(app.message.faqOptions);
 
 });
 
@@ -530,4 +535,4 @@ Action = function (x, y, type) {
 	this.y0 = y;
 	this.x = x;
 	this.y = y;
-}
+};

@@ -84,7 +84,7 @@ canvas.cnv {
 	border-radius: 50%;
 }
 #pasteText {
-	color: #CCCCCC;
+	color: #BBBBBB;
 	font-size: large;
 	z-index: 1;
 }
@@ -131,7 +131,13 @@ canvas.cnv {
 			link: '<spring:message code="msg.link"/>',
 			fail: '<spring:message code="msg.fail"/>',
 			please: '<spring:message code="msg.please"/>',
-			success: '<spring:message code="msg.success"/>'
+			success: '<spring:message code="msg.success"/>',
+			faqOptions: {
+				title: '<spring:message code="msg.faq.title"/>',
+				content: '<spring:message htmlEscape="false" code="msg.faq.content"/>',
+				html: true,
+				placement: "bottom"
+			}
 		};
 	</script>
 	<a href="https://github.com/KORPSE/screenshots"><img
@@ -139,7 +145,10 @@ canvas.cnv {
 		src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"
 		alt="Fork me on GitHub"></a>
 	<div class="page-header" style="margin-left: auto; margin-right:auto; width: 840px;">
-		<button class="btn btn-small btn-primary pull-right" id="languageButton">rus/en</button>
+		<div class="pull-right">
+			<button class="btn btn-small btn-info inline" id="faq">FAQ</button>
+			<button class="btn btn-small btn-primary" id="languageButton">rus/en</button>
+		</div>
 		<h1>Shoter</h1>
 		<i><spring:message code="msg.subtitle"/></i>
 	</div>
