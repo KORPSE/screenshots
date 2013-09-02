@@ -14,12 +14,15 @@
 html {
 	height: 100%;
 }
+
+.page-header {
+	margin-bottom: 10px;
+}
+
 #canvasHolder {
 	width: 840px;
-	height: 740px;
-	overflow-y: scroll;
-	overflow-x: scroll;
-	border: 2px dashed #cccccc;
+	height: 475px;
+	border: 2px dashed #CCCCCC;
 	background: #EEEEEE;
 }
 
@@ -34,9 +37,11 @@ canvas.cnv {
 	display: block;
 	position: absolute;
 }
+
 #cnv0 {
 	z-index: 20;
 }
+
 #cnv {
 	z-index: 21;
 }
@@ -52,22 +57,26 @@ canvas.cnv {
 	height: 1px;
 	width: 1px;
 	overflow: hidden; /* we make the box 1x1 pixel and prevent overflow */
-	filter: alpha(opacity = 0);
+	filter: alpha(opacity =   0);
 	/* that one we could drop,  we're really taking about one single pixel after all */
 	opacity: 0; /* we make that single box transparent */
 }
 
 [id^="button-"] {
+	width: 19px;
+	height: 18px;
+}
+
+#leftBar [id^="button-"] {
 	float: left;
 	margin-right: 5px;
 	margin-bottom: 5px;
-	width: 19px;
-	height: 18px;
 }
 
 #linkField {
 	width: 30em;
 }
+
 #link-brushsize {
 	display: table-cell;
 	width: 19px;
@@ -76,6 +85,7 @@ canvas.cnv {
 	margin-right: 5px;
 	margin-bottom: 5px;
 }
+
 #brush {
 	width: 5px;
 	height: 5px;
@@ -83,34 +93,83 @@ canvas.cnv {
 	display: inline-block;
 	border-radius: 50%;
 }
+
 #pasteText {
-	color: #BBBBBB;
-	font-size: large;
+	color: #999999;
+	font-size: 16px;
+	font-style: italic;
 	z-index: 1;
 }
+
 #pasteTextHolder {
-    text-align: center;
-    display:table-cell;
-    vertical-align:middle;
 	text-align: center;
-	display:table-cell;
-	vertical-align:middle;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	display: table-cell;
+	vertical-align: middle;
 	z-index: 0;
-	width: 825px;
-	height: 725px;
+	width: 840px;
+	height: 475px;
 }
+
 #canvases {
 	position: relative;
 }
+
 .bigicon {
 	width: 27px !important;
 	height: 23px !important;
 	margin-top: -2px;
 }
+
 #textOk {
 	width: 25px;
 	height: 19px;
-	background:url('static/img/glyphicons_206_ok_2.png');
+	background: url('static/img/glyphicons_206_ok_2.png');
+}
+
+#zoomTool {
+	float: left;
+	display: block;
+	width: 894px;
+	margin-right: 46px;
+}
+
+#zoomTool * {
+	float: right;
+	margin-left: 5px;
+	margin-bottom: 5px;
+}
+
+#zoom {
+	border: 1px solid #CCCCCC;
+	border-radius: 3px;
+	background: #EEEEEE;
+	padding: 3px 5px;
+}
+
+#keyIcon {
+	color: #BBBBBB;
+	font-size: large;
+	background: #F6F6F6;
+	line-height: 50px;
+	padding: 5px 8px;
+	border-radius: 5px;
+	-webkit-box-shadow: 4px 4px 4px rgba(50, 50, 50, 0.23);
+	-moz-box-shadow: 4px 4px 4px rgba(50, 50, 50, 0.23);
+	box-shadow: 4px 4px 4px rgba(50, 50, 50, 0.23);
+}
+.page-footer {
+	display:block;
+	color: #AAAAAA;
+	border-top: 1px solid #eee;
+	margin-top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 12px;
+	font-weight: bold;
+	width: 840px;
 }
 </style>
 <link href="static/toolbar/jquery.toolbars.css" rel="stylesheet">
@@ -153,6 +212,15 @@ canvas.cnv {
 		<i><spring:message code="msg.subtitle"/></i>
 	</div>
 	<div class="container" style="margin-bottom: 10px;">
+		<div id="zoomTool">
+			<div id="button-zoomIn" class="btn tool inline">
+				<img src="static/img/glyphicons_236_zoom_in.png">
+			</div>
+			<div id="button-zoomOut" class="btn tool inline">
+				<img src="static/img/glyphicons_237_zoom_out.png">
+			</div>
+			<div id="zoom">-</div>
+		</div>
 		<div id="leftBar" style="float: left; width: 50px;">
 			<div id="button-right" class="btn btn-inverse tool">
 				<img src="static/img/icon-cog-small.png">
@@ -188,11 +256,13 @@ canvas.cnv {
 				<canvas id="cnv0" class="cnv" width="0" height="0"></canvas>
 				<canvas id="cnv" class="cnv" width="0" height="0"></canvas>
 				<div id="pasteTextHolder">
+					<span id="keyIcon">Ctrl+V</span>
 					<div id="pasteText"><spring:message code="msg.paste"/></div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div align="center" class="page-footer">Created by <a href="http://vk.com/xkorpsex">I.Simonenko</a>, 2013</div>
 	
 	<img id="initImage" style="display: none">
 

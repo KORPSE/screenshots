@@ -24,6 +24,9 @@ app.state = {
 	strokeStyle: STROKE_STYLE,
 	strokeWidth: STROKE_WIDTH,
 	textSize: TEXT_SIZE,
+	zoom: 1.0,
+	realWidth: 0,
+	realHeight: 0,
 	tools : {
 		"actionPen" : MODE_PEN,
 		"actionLine" : MODE_DRAW_LINE,
@@ -87,10 +90,10 @@ app.actionPerformers[MODE_CROP] = {
 		var a = new Action (0, 0, MODE_CROP);
 
 		function getCoords(c) {
-			a.x0 = c.x;
-			a.y0 = c.y;
-			a.x = c.x2;
-			a.y = c.y2;
+			a.x0 = c.x / app.state.zoom;
+			a.y0 = c.y / app.state.zoom;
+			a.x = c.x2 / app.state.zoom;
+			a.y = c.y2 / app.state.zoom;
 		};
 		
 		$("#cnv").Jcrop({
@@ -114,21 +117,24 @@ app.actionPerformers[MODE_CROP] = {
 	},
 	execute: function (action) {
 		var cnv0 = $("#cnv0")[0];
-		var cnv = $("#cnv")[0];
+		var newWidth = action.x - action.x0;
+		var newHeight = action.y - action.y0;
 		$(cnv0).pixastic("crop", {
             rect: {
                 left: action.x0,
                 top: action.y0,
-                width: action.x - action.x0,
-                height: action.y - action.y0
+                width: newWidth,
+                height: newHeight
             }
         });
+		
+		$(document).trigger("rezoom");
+
+		app.state.realWidth = newWidth;
+		app.state.realHeight = newHeight;
 
 		var cnv0 = $("#cnv0")[0];
 		cnv0.removeAttribute("tabindex");
-		
-		cnv.width = cnv0.width;
-		cnv.height = cnv0.height;
 	},
 	post: function () {
 		if (this.jcropApi != null) {
@@ -206,8 +212,8 @@ app.actionPerformers[MODE_TEXT] = {
 				ctx.clearRect(0, 0, cnv.width, cnv.height);
 				self.update(
 						tmpAction,
-						e.pageX + app.state.dx,
-						e.pageY + app.state.dy);
+						(e.pageX + app.state.dx) / app.state.zoom,
+						(e.pageY + app.state.dy) / app.state.zoom);
 				self.execute(tmpAction);
 			};
 			this.offHandler = function () {
@@ -331,9 +337,20 @@ app.cnvController = {
 		this.doAction(action);
 		this.actionStack.push(action);
 		this.mergeCnv();
+		var initPicture = $("#initImage")[0];
+		app.state.realHeight = initPicture.height;
+		app.state.realWidth = initPicture.width;
 		$("#leftBar .btn, #color").removeAttr("disabled");
+		$("#zoomTool .btn").removeAttr("disabled");
 		$("#leftBar .tool").tooltip("destroy");
 		$("#pasteTextHolder").hide();
+		
+		var cnvHolder = $("#canvasHolder");
+		if (initPicture.width > cnvHolder.width()) {
+			app.state.zoom = cnvHolder.width() / initPicture.width;
+			cnvHolder.height(initPicture.height * app.state.zoom);
+			this.zoom(0);
+		}
 	},
 
 	down: function (e) {
@@ -348,7 +365,9 @@ app.cnvController = {
 		}
 		if (app.state.currentAction == null && allowed) {
 			this.actionForwardStack = new Array();
-			var a = new Action(e.pageX + app.state.dx, e.pageY + app.state.dy, app.state.mode);
+			var a = new Action(
+					(e.pageX + app.state.dx) / app.state.zoom,
+					(e.pageY + app.state.dy) / app.state.zoom, app.state.mode);
 			a.strokeStyle = app.state.strokeStyle;
 			a.strokeWidth = app.state.strokeWidth;
 			a.textSize = app.state.textSize;
@@ -371,8 +390,8 @@ app.cnvController = {
 				app.actionPerformers[app.state.currentAction.type]
 					.update(
 						app.state.currentAction,
-						e.pageX + app.state.dx,
-						e.pageY + app.state.dy);
+						(e.pageX + app.state.dx) / app.state.zoom,
+						(e.pageY + app.state.dy) / app.state.zoom);
 			}
 			app.cnvController.doAction(app.state.currentAction);
 		}
@@ -393,10 +412,26 @@ app.cnvController = {
 			this.doRedraw(action);			
 		}
 	},
+	
+	zoom: function (val) {
+		if (app.state.zoom > 0.1) {
+			if (val > 0) {
+				app.state.zoom = Math.round((app.state.zoom + 0.1) * 10) / 10;
+			} else if (val < 0) {
+				app.state.zoom = Math.round((app.state.zoom - 0.1) * 10) / 10;
+			}
+		}
+		$(".cnv").each(function (index, cnv) {
+			$(cnv).width(app.state.realWidth * app.state.zoom);
+			$(cnv).height(app.state.realHeight * app.state.zoom);
+		});
+		$(document).trigger("scrollbarsTest");
+		$("#zoom").text(Math.round(app.state.zoom * 100) + "%");
+	},
 	updateDeltas: function () {
-		var cnv = $("#canvases")[0];
-		app.state.dx = -cnv.offsetLeft + $(app.cnvHolder).scrollLeft();
-		app.state.dy = -cnv.offsetTop + $(app.cnvHolder).scrollTop();
+		var cnvs = $("#canvases")[0];
+		app.state.dx = -cnvs.offsetLeft + $(app.cnvHolder).scrollLeft();
+		app.state.dy = -cnvs.offsetTop + $(app.cnvHolder).scrollTop();
 	}
 };
 
@@ -420,6 +455,10 @@ $(window).load(function() {
 				app.cnvController.redo();
 				e.preventDefault();
 				return false;
+			} else if(e.which === 107) {
+				app.cnvController.zoom(1);
+			} else if(e.which === 109) {
+				app.cnvController.zoom(-1);
 			}
 			e.stopPropagation();
 		});
@@ -430,9 +469,11 @@ $(window).load(function() {
 	 */
 	
 	$(document).on("refreshEventHandlers", refreshEventHandlers );
+	
 	$(document).on("setCurrentAction", function (e, action) {
 		app.state.currentAction = action;
 	});
+	
 	$(document).on("releaseAction", function (e) {
 		
 		app.actionPerformers[app.state.mode].post();
@@ -445,8 +486,50 @@ $(window).load(function() {
 		app.cnvController.mergeCnv();
 	});
 
+	$(document).on("scrollbarsTest", function () {
+		var cnvHolder = $("#canvasHolder");
+		var cnv0 = $("#cnv0");
+		if (cnv0.width() <= cnvHolder.width()) {
+			cnvHolder[0].style.overflowX = "";
+		} else {
+			cnvHolder[0].style.overflowX = "scroll";
+		}
+		if (cnv0.height() <= cnvHolder.height()) {
+			cnvHolder[0].style.overflowY = "";
+		} else {
+			cnvHolder[0].style.overflowY = "scroll";
+		}
+	});
+	
+	$(document).on("rezoom", function () {
+		var newWidth = $("#cnv0")[0].width;
+		var newHeight = $("#cnv0")[0].height;
+		var cnvHolder = $("#canvasHolder");
+		if (newWidth < cnvHolder.width() && newHeight < cnvHolder.height()) {
+			app.state.zoom = 1;
+		} else {
+			app.state.zoom = Math.min(
+					cnvHolder.width() / newWidth,
+					cnvHolder.height() / newHeight);
+			app.cnvController.zoom(0);
+		}
+		$(".cnv").width(newWidth * app.state.zoom);
+		$(".cnv").height(newHeight * app.state.zoom);
+		var cnv = $("#cnv")[0];
+		var cnv0 = $("#cnv0")[0];
+		cnv.width = cnv0.width;
+		cnv.height = cnv0.height;
+		$("#zoom").text(Math.round(app.state.zoom * 100) + "%");
+		$(document).trigger("scrollbarsTest");
+	});
+	
+	/**
+	 *  End application events
+	 */
+	
 	if(app.cnvController.actionStack.length == 0) {
 		$("#leftBar .btn, #color").attr("disabled", true);
+		$("#zoomTool .btn").attr("disabled", true);
 	}
     $("#leftBar .btn, #color").on("click", function (e) {
         if ($(this).attr("disabled")) {
@@ -526,6 +609,14 @@ $(window).load(function() {
 	});
 	
 	$("#faq").popover(app.message.faqOptions);
+	
+	$("#button-zoomIn").on("click", function () {
+		app.cnvController.zoom(1);
+	});
+
+	$("#button-zoomOut").on("click", function () {
+		app.cnvController.zoom(-1);
+	});
 
 });
 
