@@ -611,10 +611,16 @@ $(window).load(function() {
 	$("#faq").popover(app.message.faqOptions);
 	
 	$("#button-zoomIn").on("click", function () {
+		if ($(this).attr("disabled")) {
+			return;
+		}
 		app.cnvController.zoom(1);
 	});
 
 	$("#button-zoomOut").on("click", function () {
+		if ($(this).attr("disabled")) {
+			return;
+		}
 		app.cnvController.zoom(-1);
 	});
 
