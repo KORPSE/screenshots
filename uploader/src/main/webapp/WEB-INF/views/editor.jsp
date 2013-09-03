@@ -106,9 +106,12 @@
 	<img id="initImage" style="display: none">
 
 	<div id="user-options" style="display: none">
+		<a href="#" id="actionHand" class="selected">
+			<i class="icon-white" style="background: url(static/img/cursor_hand.png)"></i>
+		</a>
 		<a href="#" id="actionPen">
-		<i class="icon-white"
-			style="background: url(static/img/glyphicons_030_pencil.png)"></i></a>
+			<i class="icon-white" style="background: url(static/img/glyphicons_030_pencil.png)"></i>
+		</a>
 		<a href="#" id="actionLine">
 			<i class="icon-white" style="background: url(static/img/glyphicons_097_vector_path_line.png)"></i>
 		</a>

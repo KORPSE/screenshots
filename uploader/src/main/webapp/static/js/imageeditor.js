@@ -29,6 +29,7 @@ app.state = {
 	realHeight: 0,
 	dragPosition: { x: 0, y: 0 },
 	tools : {
+		"actionHand" : MODE_VIEW,
 		"actionPen" : MODE_PEN,
 		"actionLine" : MODE_DRAW_LINE,
 		"actionRectangle" : MODE_DRAW_RECTANGLE,
@@ -415,10 +416,6 @@ app.cnvController = {
 	},
 
 	drag: function (e) {
-		if (app.state.mode == MODE_VIEW) {
-			
-		}
-		
 		if (app.state.currentAction != null) {
 			this.clearCnv();
 			if (app.actionPerformers[app.state.currentAction.type].update) {
@@ -529,13 +526,12 @@ $(window).load(function() {
 		app.cnvController.actionStack.push(app.state.currentAction);
 		if (app.actionPerformers[app.state.mode].unrepeatable) {
 			app.state.mode = MODE_VIEW;
+			$('[id^="action"]').removeClass("selected");
+			$('[id="actionHand"]').addClass("selected");
 		}
 		app.state.currentAction = null;
 		app.cnvController.mergeCnv();
 		switchCursor();
-		
-		$('[id^="action"]').removeClass("selected");
-
 	});
 
 	$(document).on("scrollbarsTest", function () {
@@ -610,7 +606,7 @@ $(window).load(function() {
 					app.cnvController.undo();
 				} else if (button.id == "redo") {
 					app.cnvController.redo();
-				} else if (app.state.tools[button.id]) {
+				} else if (app.state.tools[button.id] != undefined) {
 					if (app.state.mode != MODE_VIEW) { 
 						app.actionPerformers[app.state.mode].post();
 						$(document).trigger("refreshEventHandlers");
@@ -618,7 +614,9 @@ $(window).load(function() {
 					app.state.mode = app.state.tools[button.id];
 					switchCursor();
 					app.cnvController.clearCnv();
-					app.actionPerformers[app.state.mode].prepare();
+					if (app.state.mode != MODE_VIEW) { 
+						app.actionPerformers[app.state.mode].prepare();
+					}
 					$(document).trigger("switchCursor");
 				}
 			}
