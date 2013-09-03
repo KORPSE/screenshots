@@ -27,6 +27,7 @@ app.state = {
 	zoom: 1.0,
 	realWidth: 0,
 	realHeight: 0,
+	dragPosition: { x: 0, y: 0 },
 	tools : {
 		"actionPen" : MODE_PEN,
 		"actionLine" : MODE_DRAW_LINE,
@@ -203,6 +204,7 @@ app.actionPerformers[MODE_BACKGROUND] = {
 };
 
 app.actionPerformers[MODE_TEXT] = {
+		unrepeatable: true,
 		prepare: function () {
 			var cnv = $("#cnv")[0];
 			var ctx = cnv.getContext("2d");
@@ -284,6 +286,12 @@ app.cnvController = {
 	dx: 0,
 	dy: 0,
 
+	updateDeltas: function () {
+		var cnvs = $("#canvases")[0];
+		app.state.dx = -cnvs.offsetLeft + $(app.cnvHolder).scrollLeft();
+		app.state.dy = -cnvs.offsetTop + $(app.cnvHolder).scrollTop();
+	},
+	
 	doAction: function (action) {
 
 		if (action == null || app.actionPerformers[action.type] == undefined) {
@@ -355,9 +363,25 @@ app.cnvController = {
 
 	down: function (e) {
 		this.updateDeltas();
+
 		if (app.state.mode == MODE_VIEW) {
+			app.state.dragPosition = { x: e.pageX, y: e.pageY };
+			$cnvHolder = $(app.cnvHolder);
+			var controller = this;
+			$cnvHolder.on("mousemove", function (e) {
+				$cnvHolder.scrollLeft($cnvHolder.scrollLeft() + (app.state.dragPosition.x - e.pageX));
+				$cnvHolder.scrollTop($cnvHolder.scrollTop() + (app.state.dragPosition.y - e.pageY));
+				app.state.dragPosition = { x: e.pageX, y: e.pageY };
+				controller.updateDeltas();
+			});
+			$cnvHolder.on("mouseout", function (e) {
+				$cnvHolder = $(app.cnvHolder);
+				$cnvHolder.off("mousemove");
+				$cnvHolder.off("mouseout");
+			});
 			return;
 		}
+		
 		var allowed = true;
 		if (app.actionPerformers[app.state.mode]
 				&& app.actionPerformers[app.state.mode].allowed) {
@@ -378,12 +402,23 @@ app.cnvController = {
 	},
 
 	up: function (e) {
+		
+		if (app.state.mode == MODE_VIEW) {
+			$cnvHolder = $(app.cnvHolder);
+			$cnvHolder.off("mousemove");
+			return;
+		}
+		
 		if (app.state.currentAction != null) {
 			$(document).trigger("releaseAction");
 		}
 	},
 
 	drag: function (e) {
+		if (app.state.mode == MODE_VIEW) {
+			
+		}
+		
 		if (app.state.currentAction != null) {
 			this.clearCnv();
 			if (app.actionPerformers[app.state.currentAction.type].update) {
@@ -427,11 +462,9 @@ app.cnvController = {
 		});
 		$(document).trigger("scrollbarsTest");
 		$("#zoom").text(Math.round(app.state.zoom * 100) + "%");
-	},
-	updateDeltas: function () {
-		var cnvs = $("#canvases")[0];
-		app.state.dx = -cnvs.offsetLeft + $(app.cnvHolder).scrollLeft();
-		app.state.dy = -cnvs.offsetTop + $(app.cnvHolder).scrollTop();
+		
+		$(document).trigger("switchCursor");
+		this.updateDeltas();
 	}
 };
 
@@ -463,13 +496,28 @@ $(window).load(function() {
 			e.stopPropagation();
 		});
 	}
+	
+	function switchCursor() {
+    	$cnvHolder = $("#canvasHolder");
+    	$cnv = $("#cnv");
+    	$cnv.removeClass("grabbable");
+		$cnv.removeClass("crosshair");
+    	if (app.state.mode == MODE_VIEW) {
+	    	if (($cnv.width() > $cnvHolder.width())
+	    					|| ($cnv.height() > $cnvHolder.height())) {
+				$cnv.addClass("grabbable");
+			}
+    	} else {
+    		$cnv.addClass("crosshair");
+    	}
+	}
 
 	/**
 	 *  Application events
 	 */
 	
+    $(document).on("switchCursor", switchCursor);
 	$(document).on("refreshEventHandlers", refreshEventHandlers );
-	
 	$(document).on("setCurrentAction", function (e, action) {
 		app.state.currentAction = action;
 	});
@@ -484,6 +532,10 @@ $(window).load(function() {
 		}
 		app.state.currentAction = null;
 		app.cnvController.mergeCnv();
+		switchCursor();
+		
+		$('[id^="action"]').removeClass("selected");
+
 	});
 
 	$(document).on("scrollbarsTest", function () {
@@ -522,6 +574,8 @@ $(window).load(function() {
 		$("#zoom").text(Math.round(app.state.zoom * 100) + "%");
 		$(document).trigger("scrollbarsTest");
 	});
+
+
 	
 	/**
 	 *  End application events
@@ -556,14 +610,16 @@ $(window).load(function() {
 					app.cnvController.undo();
 				} else if (button.id == "redo") {
 					app.cnvController.redo();
-				} else if (app.state.tools[button.id] != undefined) {
+				} else if (app.state.tools[button.id]) {
 					if (app.state.mode != MODE_VIEW) { 
 						app.actionPerformers[app.state.mode].post();
 						$(document).trigger("refreshEventHandlers");
 					}
 					app.state.mode = app.state.tools[button.id];
+					switchCursor();
 					app.cnvController.clearCnv();
 					app.actionPerformers[app.state.mode].prepare();
+					$(document).trigger("switchCursor");
 				}
 			}
 			$('#button-right').toolbar("hide");
