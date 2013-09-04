@@ -434,6 +434,7 @@ app.cnvController = {
 			var action = this.actionStack.pop();
 			this.actionForwardStack.push(action);
 			this.doRedraw(action);
+			$(document).trigger("rezoom");
 		}
 	},
 
@@ -442,6 +443,7 @@ app.cnvController = {
 			var action = this.actionForwardStack.pop();
 			this.actionStack.push(action);
 			this.doRedraw(action);			
+			$(document).trigger("rezoom");
 		}
 	},
 	
@@ -485,9 +487,9 @@ $(window).load(function() {
 				app.cnvController.redo();
 				e.preventDefault();
 				return false;
-			} else if(e.which === 107) {
+			} else if(e.which === 107 && app.state.mode != MODE_CROP) {
 				app.cnvController.zoom(1);
-			} else if(e.which === 109) {
+			} else if(e.which === 109 && app.state.mode != MODE_CROP) {
 				app.cnvController.zoom(-1);
 			}
 			e.stopPropagation();
