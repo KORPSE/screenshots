@@ -448,12 +448,10 @@ app.cnvController = {
 	},
 	
 	zoom: function (val) {
-		if (app.state.zoom > 0.1) {
-			if (val > 0) {
-				app.state.zoom = Math.round((app.state.zoom + 0.1) * 10) / 10;
-			} else if (val < 0) {
-				app.state.zoom = Math.round((app.state.zoom - 0.1) * 10) / 10;
-			}
+		if (val > 0) {
+			app.state.zoom = Math.round((app.state.zoom + 0.1) * 10) / 10;
+		} else if (val < 0 && app.state.zoom > 0.1) {
+			app.state.zoom = Math.round((app.state.zoom - 0.1) * 10) / 10;
 		}
 		$(".cnv").each(function (index, cnv) {
 			$(cnv).width(app.state.realWidth * app.state.zoom);
