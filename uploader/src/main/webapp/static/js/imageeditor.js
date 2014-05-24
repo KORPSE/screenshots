@@ -355,11 +355,19 @@ app.cnvController = {
 		$("#pasteTextHolder").hide();
 		
 		var cnvHolder = $("#canvasHolder");
+		app.state.zoom = 1;
 		if (initPicture.width > cnvHolder.width()) {
 			app.state.zoom = cnvHolder.width() / initPicture.width;
-			cnvHolder.height(initPicture.height * app.state.zoom);
-			this.zoom(0);
+			var newHeight = initPicture.height * app.state.zoom;
+			if (newHeight > cnvHolder.height()) {
+				cnvHolder.height(newHeight);
+			}
 		}
+		if (initPicture.height > cnvHolder.height()) {
+			app.state.zoom = cnvHolder.height() / initPicture.height;
+		}
+		this.zoom(0);
+
 	},
 
 	down: function (e) {

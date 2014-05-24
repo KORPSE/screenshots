@@ -27,6 +27,11 @@ public class FileController {
 
 	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
+	@RequestMapping("favicon.ico")
+    String favicon() {
+        return "forward:/static/favicon.ico";
+    }
+	
 	@RequestMapping(value = "/{key}", method = RequestMethod.GET)
 	public void get(@PathVariable String key, HttpServletResponse res)
 		    throws IOException, EntityNotFoundException {
